@@ -9,14 +9,17 @@ import java.util.Objects;
 @Entity
 @Table(name = "likes" )
 public class Likes {
+    public static final String NAME = "likes";
+
+    private String _rid; // Cosmos generated unique id of item
+    private String _ts; // timestamp of the last update to the item
+    String id;
 
     @Id
     String userId;
     @Id
     String shortId;
     String ownerId;
-    private String _rid; // Cosmos generated unique id of item
-    private String _ts; // timestamp of the last update to the item
 
     public Likes() {
     }

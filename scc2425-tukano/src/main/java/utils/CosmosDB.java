@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import static tukano.api.Result.ErrorCode.errorCodeFromStatus;
 
@@ -219,18 +220,22 @@ public class CosmosDB {
     }
 
     /**
-     * Execute a SQL query on a container
+     * Execute a SQL query on a container.
      *
-     * @param query the query
-     * @param clazz the class of the items
-     * @return List - a list of items
+     * @param query       the query string
+     * @param returnClazz the class of the returned items (e.g., String.class for specific fields)
+     * @param clazz       the class of the container's items
+     * @param <T>         the container's item type
+     * @param <R>         the return type
+     * @return Result containing a list of items or an error
      */
+    @SuppressWarnings("unchecked")
     public static <T, R> Result<List<R>> sql(String query, Class<R> returnClazz, Class<T> clazz) {
-
         return tryCatch(() -> {
-
             boolean isCountQuery = query.toLowerCase().contains("count(*)");
-            String parsedQuery = query.replace("count(*)", "count(1)");
+
+            // Alias count(*) as count to ensure consistent field naming
+            String parsedQuery = isCountQuery ? query.replace("count(*)", "count(1)") : query;
 
             if (!returnClazz.equals(clazz)) {
                 var mapRes = getContainer(clazz).queryItems(parsedQuery, new CosmosQueryRequestOptions(), Map.class);
@@ -243,10 +248,10 @@ public class CosmosDB {
                             return (R) m.values();
                         }
                     } catch (Exception e) {
-                        Log.severe("Error: " + e.getMessage());
+                        Log.severe("Error processing query result: " + e.getMessage());
                         throw new RuntimeException("Failed to cast map to return type", e);
                     }
-                }).toList();
+                }).collect(Collectors.toList());
             } else {
                 var res = getContainer(clazz).queryItems(query, new CosmosQueryRequestOptions(), returnClazz);
                 return res.stream().toList();
@@ -254,14 +259,21 @@ public class CosmosDB {
         });
     }
 
+    /**
+     * Execute a SQL query safely, capturing and handling exceptions.
+     *
+     * @param supplierFunc the function to execute
+     * @param <T>          the return type of the function
+     * @return Result containing the value or an error
+     */
     private static <T> Result<T> tryCatch(Supplier<T> supplierFunc) {
         try {
             return Result.ok(supplierFunc.get());
         } catch (CosmosException ce) {
-            Log.severe("Error: " + ce.getMessage());
+            Log.severe("CosmosException: " + ce.getMessage());
             return Result.error(errorCodeFromStatus(ce.getStatusCode()));
         } catch (Exception x) {
-            Log.severe("Error: " + x.getMessage());
+            Log.severe("Exception: " + x.getMessage());
             return Result.error(Result.ErrorCode.INTERNAL_ERROR);
         }
     }

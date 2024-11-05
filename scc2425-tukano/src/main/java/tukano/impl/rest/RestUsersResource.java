@@ -27,63 +27,60 @@ public class RestUsersResource extends RestResource implements RestUsers {
 
     @Override
     public String createUser(User user) {
-        try (var jedis = RedisCache.getCachePool().getResource()) {
-            var key = USER_KEY + user.displayName();
-            var value = jedis.get(key);
-            if (value != null) {
-                return "CONFLICT";
-            }
+//        try (var jedis = RedisCache.getCachePool().getResource()) {
+//            var key = USER_KEY + user.displayName();
+//            var value = jedis.get(key);
+//            if (value != null) {
+//                return "CONFLICT";
+//            }
             var createdUser = super.resultOrThrow(impl.createUser(user));
-            jedis.set(key, JSON.encode(user));
-            invalidateSearchCacheByUser(user.displayName());
+//            jedis.set(key, JSON.encode(user));
+//            invalidateSearchCacheByUser(user.displayName());
             return createdUser;
-        }
+//        }
     }
 
     @Override
     public User getUser(String name, String pwd) {
-        try (var jedis = RedisCache.getCachePool().getResource()) {
-            var key = USER_KEY + name;
-            var value = jedis.get(key);
-            if (value != null) {
-                return JSON.decode(value, User.class);
-            }
+//        try (var jedis = RedisCache.getCachePool().getResource()) {
+//            var key = USER_KEY + name;
+//            var value = jedis.get(key);
+//            if (value != null) {
+//                return JSON.decode(value, User.class);
+//            }
             var user = super.resultOrThrow(impl.getUser(name, pwd));
-            jedis.set(key, JSON.encode(user));
+//            jedis.set(key, JSON.encode(user));
             return user;
-        }
+//        }
     }
 
     @Override
     public User updateUser(String name, String pwd, User user) {
-        try (var jedis = RedisCache.getCachePool().getResource()) {
-            var key = USER_KEY + name;
-            var value = jedis.get(key);
-            if (value != null) {
-
-                jedis.set(key, JSON.encode(user));
-            }
+//        try (var jedis = RedisCache.getCachePool().getResource()) {
             var updatedUser = super.resultOrThrow(impl.updateUser(name, pwd, user));
-
-            jedis.set(key, JSON.encode(user));
-            invalidateSearchCacheByUser(name);
+//            var key = USER_KEY + name;
+//            var oldValue = jedis.get(key);
+//            if (oldValue != null) {
+//                jedis.del(oldValue);
+//            }
+//            jedis.set(USER_KEY + updatedUser.displayName(), JSON.encode(user));
+//            invalidateSearchCacheByUser(name);
             return updatedUser;
-        }
+//        }
     }
 
     @Override
     public User deleteUser(String name, String pwd) {
-        try (var jedis = RedisCache.getCachePool().getResource()) {
-            var key = USER_KEY + name;
-            var value = jedis.get(key);
-            //var dbPwd = value.split(";")[1] //pwd value
-            //if dbPwd != pwd { couldn't delete, wrong password }
-            if (value != null) {
-                jedis.del(key);
-            }
-            invalidateSearchCacheByUser(name);
-            return super.resultOrThrow(impl.deleteUser(name, pwd));
-        }
+        var deletedUer = super.resultOrThrow(impl.deleteUser(name, pwd));
+//        try (var jedis = RedisCache.getCachePool().getResource()) {
+//            var key = USER_KEY + name;
+//            var value = jedis.get(key);
+//            if (value != null) {
+//                jedis.del(key);
+//            }
+//            invalidateSearchCacheByUser(name);
+//        }
+        return deletedUer;
     }
 
     /**

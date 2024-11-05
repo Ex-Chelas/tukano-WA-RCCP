@@ -28,7 +28,7 @@ public class TukanoRestServer extends Application {
     private final Set<Class<?>> resources = new HashSet<>();
 
     protected TukanoRestServer() {
-        serverURI = String.format(SERVER_BASE_URI, IP.hostname(), PORT);
+        serverURI = String.format(SERVER_BASE_URI, "127.0.0.1"/*IP.hostAddress()*/, PORT);
         resources.add(RestBlobsResource.class);
         resources.add(RestUsersResource.class);
         resources.add(RestShortsResource.class);
@@ -37,7 +37,7 @@ public class TukanoRestServer extends Application {
     public static void main(String[] args) throws Exception {
         Args.use(args);
 
-        Token.setSecret(Args.valueOf("-secret", "" ));
+        Token.setSecret(Args.valueOf("-secret", "secret" ));
 //		Props.load( Args.valueOf("-props", "").split(","));
 
         new TukanoRestServer().start();
@@ -56,10 +56,9 @@ public class TukanoRestServer extends Application {
     protected void start() throws Exception {
 
         ResourceConfig config = new ResourceConfig();
-
-        config.register(RestBlobsResource.class);
-        config.register(RestUsersResource.class);
-        config.register(RestShortsResource.class);
+        for (Class<?> resource : resources) {
+            config.register(resource);
+        }
 
         JdkHttpServerFactory.createHttpServer(URI.create(serverURI.replace(IP.hostname(), INET_ADDR_ANY)), config);
 

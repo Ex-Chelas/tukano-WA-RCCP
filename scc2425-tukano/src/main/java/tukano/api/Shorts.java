@@ -38,7 +38,6 @@ public interface Shorts {
      */
     Result<Void> deleteShort(String shortId, String password);
 
-
     /**
      * Retrieves a given Short.
      *
@@ -47,7 +46,6 @@ public interface Shorts {
      * NOT_FOUND if shortId does not match an existing short
      */
     Result<Short> getShort(String shortId);
-
 
     /**
      * Retrieves the identifiers' list of the shorts created by the given user, with its total likes count updated.
@@ -97,7 +95,6 @@ public interface Shorts {
      */
     Result<Void> like(String shortId, String userId, boolean isLiked, String password);
 
-
     /**
      * Returns all the likes of a given short
      *
@@ -108,7 +105,6 @@ public interface Shorts {
      * FORBIDDEN if the password is incorrect
      */
     Result<List<String>> likes(String shortId, String password);
-
 
     /**
      * Returns the feed of the user, sorted by age.

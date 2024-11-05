@@ -9,13 +9,15 @@ import java.util.Objects;
 @Entity
 @Table(name = "following" )
 public class Following {
+    public static final String NAME = "following";
+    private String _rid; // Cosmos generated unique id of item
+    private String _ts; // timestamp of the last update to the item
+    String id;
 
     @Id
     String follower;
     @Id
     String followee;
-    private String _rid; // Cosmos generated unique id of item
-    private String _ts; // timestamp of the last update to the item
 
     public Following() {
     }

@@ -69,7 +69,7 @@ public class JavaShorts implements Shorts {
 
                             CosmosDB.deleteOne(Short.class, shorty);
 
-                            var query = format("DELETE Likes l WHERE l.shortId = '%s'", shortId);
+                            var query = format("DELETE Likes FROM Likes l WHERE l.shortId = '%s'", shortId);
                             CosmosDB.sql(query, Void.class, Likes.class);
 
                             JavaBlobs.getInstance().delete(shorty.getBlobUrl(), Token.get());
