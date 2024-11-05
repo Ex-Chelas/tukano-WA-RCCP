@@ -19,7 +19,7 @@ public class JavaUsers implements Users {
     private static final Logger Log = Logger.getLogger(JavaUsers.class.getName());
 
     private static Users instance;
-    
+
     private static final String USER_ID_KEY = "id";
 
     private JavaUsers() {
@@ -47,7 +47,7 @@ public class JavaUsers implements Users {
 
         if (userId == null)
             return error(BAD_REQUEST);
-        
+
         return validatedUserOrError(CosmosDB.getOne(User.class, USER_ID_KEY, userId, User.class), pwd);
     }
 
@@ -71,24 +71,26 @@ public class JavaUsers implements Users {
         if (userId == null || pwd == null)
             return error(BAD_REQUEST);
 
-        return errorOrResult(validatedUserOrError(CosmosDB.getOne(User.class, USER_ID_KEY, userId, User.class), pwd), user -> {
+        return errorOrResult(
+                validatedUserOrError(CosmosDB.getOne(User.class, USER_ID_KEY, userId, User.class), pwd), user -> {
+                    // Delete user shorts and related info asynchronously in a separate thread
+                    Executors.defaultThreadFactory().newThread(() -> {
+                        JavaShorts.getInstance().deleteAllShorts(userId, pwd, Token.get(userId));
+                        JavaBlobs.getInstance().deleteAllBlobs(userId, Token.get(userId));
+                    }).start();
 
-            // Delete user shorts and related info asynchronously in a separate thread
-            Executors.defaultThreadFactory().newThread(() -> {
-                JavaShorts.getInstance().deleteAllShorts(userId, pwd, Token.get(userId));
-                JavaBlobs.getInstance().deleteAllBlobs(userId, Token.get(userId));
-            }).start();
-
-            return CosmosDB.deleteOne(User.class, user);
-        });
+                    return (Result<User>) CosmosDB.deleteOne(User.class, user);
+                }
+        );
     }
 
     @Override
     public Result<List<User>> searchUsers(String pattern) {
         Log.info(() -> format("searchUsers : patterns = %s\n", pattern));
 
-        var query = format("SELECT * FROM User u WHERE UPPER(u.userId) LIKE '%%%s%%'", pattern.toUpperCase());
+        var query = format("SELECT * FROM User u WHERE UPPER(u.id) LIKE '%%%s%%'", pattern.toUpperCase());
         var hits = CosmosDB.query(User.class, query, User.class)
+                .value()
                 .stream()
                 .map(User::copyWithoutPassword)
                 .toList();

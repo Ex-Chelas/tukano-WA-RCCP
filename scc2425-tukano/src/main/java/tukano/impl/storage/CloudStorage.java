@@ -20,7 +20,7 @@ public class CloudStorage implements BlobStorage {
     // DefaultEndpointsProtocol=https;AccountName=scc70730n70731;AccountKey=h8uWFmizikv53KOIIiN+Jbrbhs2EDW94zgVTNZFu+ARlCOms4HWL+JzHWZ/3foavHnGWWGUi/Xe3+AStFudxPA==;EndpointSuffix=core.windows.net
     // https://scc70730n70731.blob.core.windows.net/images
     private static final String storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=scc70730n70731;AccountKey=h8uWFmizikv53KOIIiN+Jbrbhs2EDW94zgVTNZFu+ARlCOms4HWL+JzHWZ/3foavHnGWWGUi/Xe3+AStFudxPA==;EndpointSuffix=core.windows.net";
-    private static final String CONTAINER_NAME = "images";
+    private static final String CONTAINER_NAME = "shorts";
 
     private final BlobContainerClient containerClient;
 

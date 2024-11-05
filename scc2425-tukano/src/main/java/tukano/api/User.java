@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "user" )
 public class User {
+    public static final String NAME = "users";
 
     private String _rid; // Cosmos generated unique id of item
     private String _ts; // timestamp of the last update to the item
