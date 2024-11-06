@@ -7,27 +7,31 @@ import jakarta.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "likes" )
+@Table(name = "likes")
 public class Likes {
     public static final String NAME = "likes";
-
     private String _rid; // Cosmos generated unique id of item
     private String _ts; // timestamp of the last update to the item
-    String id;
 
     @Id
-    String userId;
-    @Id
-    String shortId;
-    String ownerId;
+    private String id; // Composite ID
+
+    private String userId;
+    private String shortId;
+    private String ownerId;
 
     public Likes() {
     }
 
     public Likes(String userId, String shortId, String ownerId) {
+        this.id = generateId(userId, shortId);
         this.userId = userId;
         this.shortId = shortId;
         this.ownerId = ownerId;
+    }
+
+    private String generateId(String userId, String shortId) {
+        return userId + ":" + shortId;
     }
 
     public String getOwnerId() {
@@ -52,6 +56,14 @@ public class Likes {
 
     public void setShortId(String shortId) {
         this.shortId = shortId;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
@@ -85,6 +97,5 @@ public class Likes {
         return Objects.equals(ownerId, other.ownerId) && Objects.equals(shortId, other.shortId)
                 && Objects.equals(userId, other.userId);
     }
-
 
 }

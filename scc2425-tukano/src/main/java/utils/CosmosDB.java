@@ -19,9 +19,10 @@ import static tukano.api.Result.ErrorCode.errorCodeFromStatus;
 
 public class CosmosDB {
     private static final Logger Log = Logger.getLogger(CosmosDB.class.getName());
-
+    private static final String CONNECTION_JDBC_URL = "jdbc:postgresql://c-scc70730n70731.e3hzdsb2yp333s.postgres.cosmos.azure.com:5432/citus?user=citus&password=Scc70730n70731&sslmode=require";
     private static final String CONNECTION_URL = "https://scc70730n70731.documents.azure.com:443/"; // Replace with values from the Azure portal
-    private static final String DB_KEY = "264wgYscqGUGj8AiNR5QF9jANa2AqwBANyLxdhq9aZYRqVJYGkd2C9hnoiiFabdacGvahaYpniK5ACDbWPwmdQ==";
+    private static final String DB_KEY = "Fr7lzoYdEQYIGIYVTZybFwFt07Xkv8cdzNP4y4VNECpiPdittHawa2r1cN15VUjX8ibqPvXhu5abACDbguLESw==";
+    private static final String DB_USER = "citus";
     private static final String DB_NAME = "scc70730n70731";
 
     static CosmosClient client = new CosmosClientBuilder()
@@ -245,13 +246,14 @@ public class CosmosDB {
                         if (isCountQuery) {
                             return (R) m.get("$1");
                         } else {
-                            return (R) m.values();
+                            // first value only
+                            return (R) m.values().iterator().next();
                         }
                     } catch (Exception e) {
                         Log.severe("Error processing query result: " + e.getMessage());
                         throw new RuntimeException("Failed to cast map to return type", e);
                     }
-                }).collect(Collectors.toList());
+                }).toList();
             } else {
                 var res = getContainer(clazz).queryItems(query, new CosmosQueryRequestOptions(), returnClazz);
                 return res.stream().toList();

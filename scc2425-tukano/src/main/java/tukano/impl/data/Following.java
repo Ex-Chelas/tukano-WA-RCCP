@@ -7,25 +7,29 @@ import jakarta.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "following" )
+@Table(name = "following")
 public class Following {
     public static final String NAME = "following";
     private String _rid; // Cosmos generated unique id of item
     private String _ts; // timestamp of the last update to the item
-    String id;
 
     @Id
-    String follower;
-    @Id
-    String followee;
+    private String id; // Composite ID
+
+    private String follower;
+    private String followee;
 
     public Following() {
     }
 
     public Following(String follower, String followee) {
-        super();
+        this.id = generateId(follower, followee);
         this.follower = follower;
         this.followee = followee;
+    }
+
+    private String generateId(String follower, String followee) {
+        return follower + ":" + followee;
     }
 
     public String getFollower() {
@@ -42,6 +46,14 @@ public class Following {
 
     public void setFollowee(String followee) {
         this.followee = followee;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
@@ -70,5 +82,4 @@ public class Following {
         String[] parts = str.split("," );
         return new Following(parts[0].split("=" )[1], parts[1].split("=" )[1]);
     }
-
 }

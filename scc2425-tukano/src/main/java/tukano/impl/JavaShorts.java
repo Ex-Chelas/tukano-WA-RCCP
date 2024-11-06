@@ -102,6 +102,7 @@ public class JavaShorts implements Shorts {
 
         return errorOrResult(okUser(userId1, password), user -> {
             var f = new Following(userId1, userId2);
+            System.out.println(f.getId());
             return errorOrVoid(okUser(userId2), isFollowing ? CosmosDB.insertOne(Following.class, f) : CosmosDB.deleteOne(Following.class, f));
         });
     }
