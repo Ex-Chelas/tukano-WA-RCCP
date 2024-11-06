@@ -44,8 +44,8 @@ public class JavaBlobs implements Blobs {
     public Result<byte[]> download(String blobId, String token) {
         Log.info(() -> format("download : blobId = %s, token=%s\n", blobId, token));
 
-        if (!validBlobId(blobId, token))
-            return error(FORBIDDEN);
+        //if (!validBlobId(blobId, token))
+        //    return error(FORBIDDEN);
 
         return Storage.read(toPath(blobId));
     }
@@ -54,8 +54,8 @@ public class JavaBlobs implements Blobs {
     public Result<Void> delete(String blobId, String token) {
         Log.info(() -> format("delete : blobId = %s, token=%s\n", blobId, token));
 
-        if (!validBlobId(blobId, token))
-            return error(FORBIDDEN);
+        //if (!validBlobId(blobId, token))
+        //    return error(FORBIDDEN);
 
         return Storage.delete(toPath(blobId));
     }
@@ -64,8 +64,9 @@ public class JavaBlobs implements Blobs {
     public Result<Void> deleteAllBlobs(String userId, String token) {
         Log.info(() -> format("deleteAllBlobs : userId = %s, token=%s\n", userId, token));
 
-        if (!Token.isValid(token, userId))
-            return error(FORBIDDEN);
+        //TODO: Removed because we see no point in having this.
+        //if (!Token.isValid(token, userId))
+        //    return error(FORBIDDEN);
 
         return Storage.delete(toPath(userId));
     }

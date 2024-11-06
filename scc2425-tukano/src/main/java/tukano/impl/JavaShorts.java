@@ -234,8 +234,7 @@ public class JavaShorts implements Shorts {
                         }
                     }
 
-                    //TODO: Not tested because we are not uploading the blob, so we can't assure deletion
-                    JavaBlobs.getInstance().delete(shorty.getBlobUrl(), Token.get());
+                    JavaBlobs.getInstance().delete(shorty.getId(), Token.get());
                 }
                 var queryFollows = format("SELECT * FROM Following f WHERE f.follower = '%s' OR f.followee = '%s'", userId, userId);
                 var followsResult = DB.sql(queryFollows, Following.class, Following.class);
