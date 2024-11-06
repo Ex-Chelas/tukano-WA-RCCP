@@ -73,7 +73,7 @@ public class JavaUsers implements Users {
                 validatedUserOrError(DB.getOne(userId, User.class), pwd), user -> {
                     // Delete user shorts and related info asynchronously in a separate thread
                     Executors.defaultThreadFactory().newThread(() -> {
-                        JavaShorts.getInstance().deleteAllShorts(userId, pwd, Token.get(userId));
+                        JavaShorts.getInstance().deleteAllShorts(userId, pwd);
                         JavaBlobs.getInstance().deleteAllBlobs(userId, Token.get(userId));
                     }).start();
 

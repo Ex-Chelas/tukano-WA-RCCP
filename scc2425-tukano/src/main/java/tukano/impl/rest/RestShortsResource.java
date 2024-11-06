@@ -194,8 +194,8 @@ public class RestShortsResource extends RestResource implements RestShorts {
     }
 
     @Override
-    public void deleteAllShorts(String userId, String password, String token) {
-        super.resultOrThrow(impl.deleteAllShorts(userId, password, token));
+    public void deleteAllShorts(String userId, String password) {
+        super.resultOrThrow(impl.deleteAllShorts(userId, password));
 //        try (var jedis = RedisCache.getCachePool().getResource()) {
 //            var key = USER_SHORTS_KEY + userId;
 //            var userShorts = jedis.get(key);

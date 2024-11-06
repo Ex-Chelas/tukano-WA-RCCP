@@ -143,9 +143,9 @@ public class JavaShorts implements Shorts {
         Log.info(() -> format("getFeed : userId = %s, pwd = %s\n", userId, password));
 
         final var QUERY_FMT = """
-                SELECT s.shortId, s.timestamp FROM Shorts s WHERE s.ownerId = '%s'
+                SELECT s.id, s.timestamp FROM Shorts s WHERE s.ownerId = '%s'
                 UNION
-                SELECT s.shortId, s.timestamp FROM Shorts s, Following f
+                SELECT s.id, s.timestamp FROM Shorts s, Following f
                 	WHERE
                 		f.followee = s.ownerId AND f.follower = '%s'
                 ORDER BY s.timestamp DESC""";
@@ -166,24 +166,50 @@ public class JavaShorts implements Shorts {
     }
 
     @Override
-    public Result<Void> deleteAllShorts(String userId, String password, String token) {
-        Log.info(() -> format("deleteAllShorts : userId = %s, password = %s, token = %s\n", userId, password, token));
+    public Result<Void> deleteAllShorts(String userId, String password) {
+        Log.info(() -> format("deleteAllShorts : userId = %s, password = %s", userId, password));
 
-        if (!Token.isValid(token, userId))
-            return error(FORBIDDEN);
+        return errorOrResult(okUser(userId, password), user -> {
 
-        //delete shorts
-        var query1 = format("DELETE Short s WHERE s.ownerId = '%s'", userId);
-        DB.sql(query1, Void.class, Short.class);
+            var queryShorts = format("SELECT * FROM Shorts s WHERE s.ownerId = '%s'", userId);
+            var shortsResult = DB.sql(queryShorts, Short.class, Short.class);
 
-        //delete follows
-        var query2 = format("DELETE Following f WHERE f.follower = '%s' OR f.followee = '%s'", userId, userId);
-        DB.sql(query2, Void.class, Following.class);
+            return errorOrResult(shortsResult, shorts -> {
+                for (Short shorty : shorts) {
+                    DB.deleteOne(shorty);
+                    var queryLikes = format("SELECT * FROM Likes l WHERE l.shortId = '%s'", shorty.getId());
+                    var likesResult = DB.sql(queryLikes, Likes.class, Likes.class);
 
-        //delete likes
-        var query3 = format("DELETE Likes l WHERE l.ownerId = '%s' OR l.userId = '%s'", userId, userId);
-        DB.sql(query3, Void.class, Likes.class);
+                    if (likesResult.isOK()) {
+                        var likes = likesResult.value();
+                        for (Likes like : likes) {
+                            DB.deleteOne(like);
+                        }
+                    }
 
-        return null;
+                    JavaBlobs.getInstance().delete(shorty.getBlobUrl(), Token.get());
+                }
+                var queryFollows = format("SELECT * FROM Following f WHERE f.follower = '%s' OR f.followee = '%s'", userId, userId);
+                var followsResult = DB.sql(queryFollows, Following.class, Following.class);
+
+                if (followsResult.isOK()) {
+                    var follows = followsResult.value();
+                    for (Following follow : follows) {
+                        DB.deleteOne(follow);
+                    }
+                }
+                var queryUserLikes = format("SELECT * FROM Likes l WHERE l.userId = '%s'", userId);
+                var userLikesResult = DB.sql(queryUserLikes, Likes.class, Likes.class);
+
+                if (userLikesResult.isOK()) {
+                    var userLikes = userLikesResult.value();
+                    for (Likes like : userLikes) {
+                        DB.deleteOne(like);
+                    }
+                }
+
+                return ok();
+            });
+        });
     }
 }

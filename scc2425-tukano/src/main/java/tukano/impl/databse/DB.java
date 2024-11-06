@@ -42,11 +42,4 @@ public class DB {
         return Result.errorOrValue(instance.insertOne(obj), obj);
     }
 
-//    public static <T> Result<T> transaction(Consumer<Session> c) {
-//        return instance.transaction(c);
-//    }
-//
-//    public static <T> Result<T> transaction(Function<Session, Result<T>> func) {
-//        return instance.transaction(func);
-//    }
 }

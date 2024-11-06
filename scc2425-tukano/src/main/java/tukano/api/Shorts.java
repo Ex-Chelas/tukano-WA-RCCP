@@ -123,10 +123,9 @@ public interface Shorts {
      *
      * @param userId   the user that owns the shorts
      * @param password the password of the user
-     * @param token    the token of the user
      * @return (OK, void)
      * NOT_FOUND if the user does not exist
      * FORBIDDEN if the password is incorrect
      */
-    Result<Void> deleteAllShorts(String userId, String password, String token);
+    Result<Void> deleteAllShorts(String userId, String password);
 }

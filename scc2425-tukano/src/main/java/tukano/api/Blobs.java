@@ -40,7 +40,6 @@ public interface Blobs {
      */
     Result<Void> delete(String blobId, String token);
 
-
     /**
      * Deletes all short video blob resources from a given userId.
      *
