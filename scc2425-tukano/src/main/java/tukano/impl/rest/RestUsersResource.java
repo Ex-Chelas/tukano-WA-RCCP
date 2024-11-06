@@ -6,10 +6,9 @@ import tukano.api.User;
 import tukano.api.Users;
 import tukano.api.rest.RestUsers;
 import tukano.impl.JavaUsers;
+import tukano.impl.cache.RedisCache;
 import utils.JSON;
-import utils.RedisCache;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -25,6 +24,53 @@ public class RestUsersResource extends RestResource implements RestUsers {
         this.impl = JavaUsers.getInstance();
     }
 
+    /**
+     * Helper method to get all cache keys related with user
+     *
+     * @return set of keys
+     */
+    private static Set<String> getCachedUserKeys() {
+        try (var jedis = RedisCache.getCachePool().getResource()) {
+            return jedis.keys(USER_KEY + "*");
+        }
+    }
+
+    /**
+     * Helper method to get all cache keys related with search
+     *
+     * @return set of keys
+     */
+    private static Set<String> getCachedSearchKeys() {
+        try (var jedis = RedisCache.getCachePool().getResource()) {
+            return jedis.keys(SEARCH_KEY + "*");
+        }
+    }
+
+    /**
+     * Helper method to invalidate search cache related to a user
+     *
+     * @param name user name
+     */
+    private static void invalidateSearchCacheByUser(String name) {
+        try (var jedis = RedisCache.getCachePool().getResource()) {
+            var keys = getCachedSearchKeys();
+            for (var key : keys) {
+                var value = jedis.get(key);
+                if (value != null) {
+                    var users = JSON.decode(value, new TypeReference<List<User>>() {
+                    });
+                    assert users != null;
+                    for (var user : users) {
+                        if (user.displayName().equals(name)) {
+                            jedis.del(key);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     public String createUser(User user) {
 //        try (var jedis = RedisCache.getCachePool().getResource()) {
@@ -33,10 +79,10 @@ public class RestUsersResource extends RestResource implements RestUsers {
 //            if (value != null) {
 //                return "CONFLICT";
 //            }
-            var createdUser = super.resultOrThrow(impl.createUser(user));
+        var createdUser = super.resultOrThrow(impl.createUser(user));
 //            jedis.set(key, JSON.encode(user));
 //            invalidateSearchCacheByUser(user.displayName());
-            return createdUser;
+        return createdUser;
 //        }
     }
 
@@ -48,16 +94,16 @@ public class RestUsersResource extends RestResource implements RestUsers {
 //            if (value != null) {
 //                return JSON.decode(value, User.class);
 //            }
-            var user = super.resultOrThrow(impl.getUser(name, pwd));
+        var user = super.resultOrThrow(impl.getUser(name, pwd));
 //            jedis.set(key, JSON.encode(user));
-            return user;
+        return user;
 //        }
     }
 
     @Override
     public User updateUser(String name, String pwd, User user) {
 //        try (var jedis = RedisCache.getCachePool().getResource()) {
-            var updatedUser = super.resultOrThrow(impl.updateUser(name, pwd, user));
+        var updatedUser = super.resultOrThrow(impl.updateUser(name, pwd, user));
 //            var key = USER_KEY + name;
 //            var oldValue = jedis.get(key);
 //            if (oldValue != null) {
@@ -65,7 +111,7 @@ public class RestUsersResource extends RestResource implements RestUsers {
 //            }
 //            jedis.set(USER_KEY + updatedUser.displayName(), JSON.encode(user));
 //            invalidateSearchCacheByUser(name);
-            return updatedUser;
+        return updatedUser;
 //        }
     }
 
@@ -116,48 +162,5 @@ public class RestUsersResource extends RestResource implements RestUsers {
 //            jedis.set(key, JSON.encode(users));
 //            return allUsers;
 //        }
-    }
-
-    /**
-     * Helper method to get all cache keys related with user
-     * @return set of keys
-     */
-    private static Set<String> getCachedUserKeys() {
-        try (var jedis = RedisCache.getCachePool().getResource()) {
-            return jedis.keys(USER_KEY + "*");
-        }
-    }
-
-    /**
-     * Helper method to get all cache keys related with search
-     * @return set of keys
-     */
-    private static Set<String> getCachedSearchKeys() {
-        try (var jedis = RedisCache.getCachePool().getResource()) {
-            return jedis.keys(SEARCH_KEY + "*");
-        }
-    }
-
-    /**
-     * Helper method to invalidate search cache related to a user
-     * @param name user name
-     */
-    private static void invalidateSearchCacheByUser(String name) {
-        try (var jedis = RedisCache.getCachePool().getResource()) {
-            var keys = getCachedSearchKeys();
-            for (var key : keys) {
-                var value = jedis.get(key);
-                if (value != null) {
-                    var users = JSON.decode(value, new TypeReference<List<User>>() {});
-                    assert users != null;
-                    for (var user : users) {
-                        if (user.displayName().equals(name)) {
-                            jedis.del(key);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
     }
 }

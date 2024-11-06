@@ -5,62 +5,59 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobContainerClientBuilder;
 import tukano.api.Result;
 import tukano.api.Result.ErrorCode;
+import utils.TryCatch;
 
 import java.util.function.Consumer;
-import java.util.function.Supplier;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Implementation of BlobStorage for Azure Blob Storage
+ */
 public class CloudStorage implements BlobStorage {
-
     private static final Logger Log = Logger.getLogger(CloudStorage.class.getName());
-
-    // Get connection string in the storage access keys page
-    // mvn -DconnectionString=some_value install
-    // DefaultEndpointsProtocol=https;AccountName=scc70730n70731;AccountKey=h8uWFmizikv53KOIIiN+Jbrbhs2EDW94zgVTNZFu+ARlCOms4HWL+JzHWZ/3foavHnGWWGUi/Xe3+AStFudxPA==;EndpointSuffix=core.windows.net
-    // https://scc70730n70731.blob.core.windows.net/images
-    private static final String storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=scc70730n70731;AccountKey=h8uWFmizikv53KOIIiN+Jbrbhs2EDW94zgVTNZFu+ARlCOms4HWL+JzHWZ/3foavHnGWWGUi/Xe3+AStFudxPA==;EndpointSuffix=core.windows.net";
     private static final String CONTAINER_NAME = "shorts";
+    private static CloudStorage instance;
+    private static BlobContainerClient containerClient;
 
-    private final BlobContainerClient containerClient;
-
-    public CloudStorage() {
-        this.containerClient = new BlobContainerClientBuilder()
-                .connectionString(storageConnectionString)
+    private CloudStorage(String connectionString) {
+        containerClient = new BlobContainerClientBuilder()
+                .connectionString(connectionString)
                 .containerName(CONTAINER_NAME)
                 .buildClient();
-
-        // Ensure the container exists
-        if (!containerClient.exists()) {
-            containerClient.create();
-            Log.info("Created new Azure Blob container: " + CONTAINER_NAME);
-        }
     }
 
+    public synchronized static CloudStorage getInstance(String connectionString) {
+        if (instance == null) {
+            // Ensure the connection string is not null or empty
+            if (BlobStorage.isValidPath(connectionString)) {
+                Log.severe("Invalid connection string provided.");
+                throw new IllegalArgumentException("Invalid connection string provided.");
+            }
 
-    /**
-     * Utility method to execute a blob operation within a try-catch block.
-     *
-     * @param operation The blob operation to execute.
-     * @param <T>       The type of the Result.
-     * @return A Result object representing the outcome of the operation.
-     */
-    private <T> Result<T> tryCatch(Supplier<Result<T>> operation) {
-        try {
-            return operation.get();
-        } catch (Exception e) {
-            Log.log(Level.SEVERE, "Unexpected error during Azure Blob operation.", e);
-            return Result.error(ErrorCode.INTERNAL_ERROR);
+            // Ensure the connection string is valid
+            if (!connectionString.startsWith("DefaultEndpointsProtocol=")) {
+                Log.severe("Invalid connection string provided.");
+                throw new IllegalArgumentException("Invalid connection string provided.");
+            }
+
+            instance = new CloudStorage(connectionString);
+
+            // Ensure the container exists
+            if (!containerClient.exists()) {
+                containerClient.create();
+                Log.info("Created new Azure Blob container: " + CONTAINER_NAME);
+            }
         }
+        return instance;
     }
 
     @Override
     public Result<Void> write(String path, byte[] bytes) {
-        if (path == null || path.isBlank()) {
+        if (BlobStorage.isValidPath(path)) {
             return Result.error(ErrorCode.BAD_REQUEST);
         }
 
-        return tryCatch(() -> {
+        return TryCatch.tryCatchForResult(Log, () -> {
             var blobClient = containerClient.getBlobClient(path);
             blobClient.upload(BinaryData.fromBytes(bytes), true);
 
@@ -71,11 +68,11 @@ public class CloudStorage implements BlobStorage {
 
     @Override
     public Result<Void> delete(String path) {
-        if (path == null || path.isBlank()) {
+        if (BlobStorage.isValidPath(path)) {
             return Result.error(ErrorCode.BAD_REQUEST);
         }
 
-        return tryCatch(() -> {
+        return TryCatch.tryCatchForResult(Log, () -> {
             var blobClient = containerClient.getBlobClient(path);
             if (!blobClient.exists()) {
                 return Result.error(ErrorCode.NOT_FOUND);
@@ -88,11 +85,11 @@ public class CloudStorage implements BlobStorage {
 
     @Override
     public Result<byte[]> read(String path) {
-        if (path == null || path.isBlank()) {
+        if (BlobStorage.isValidPath(path)) {
             return Result.error(ErrorCode.BAD_REQUEST);
         }
 
-        return tryCatch(() -> {
+        return TryCatch.tryCatchForResult(Log, () -> {
             var blobClient = containerClient.getBlobClient(path);
             if (!blobClient.exists()) {
                 return Result.error(ErrorCode.NOT_FOUND);
@@ -105,11 +102,11 @@ public class CloudStorage implements BlobStorage {
 
     @Override
     public Result<Void> read(String path, Consumer<byte[]> sink) {
-        if (path == null || path.isBlank()) {
+        if (BlobStorage.isValidPath(path)) {
             return Result.error(ErrorCode.BAD_REQUEST);
         }
 
-        return tryCatch(() -> {
+        return TryCatch.tryCatchForResult(Log, () -> {
             var blobClient = containerClient.getBlobClient(path);
             if (!blobClient.exists()) {
                 return Result.error(ErrorCode.NOT_FOUND);

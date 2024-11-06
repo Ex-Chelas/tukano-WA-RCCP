@@ -20,7 +20,7 @@ public class Args {
     static public void useArgs(String key) {
         _current = _args.get(key);
         if (_current == null)
-            throw new RuntimeException("Unknown key..." );
+            throw new RuntimeException("Unknown key...");
     }
 
     static public void setArgs(String key, String[] args) {
@@ -105,7 +105,7 @@ public class Args {
         for (int i = 0; i < args.length - 1; i++)
             if (flag.equals(args[i])) {
                 i++;
-                while (!args[i].startsWith("-" ) && i < args.length) {
+                while (!args[i].startsWith("-") && i < args.length) {
                     outArgs.add(args[i]);
                     i++;
                 }
@@ -119,7 +119,7 @@ public class Args {
         for (int i = 0; i < args.length - 1; i++)
             if (flag.equals(args[i])) {
                 for (int j = i + 1; j < args.length; j++)
-                    if (args[j].startsWith("-" ))
+                    if (args[j].startsWith("-"))
                         return res;
                     else
                         res.add(args[j]);
@@ -131,7 +131,7 @@ public class Args {
         var lines = new LinkedList<String>();
         var line = new StringBuilder();
         for (var arg : _current) {
-            if (arg.startsWith("-" )) {
+            if (arg.startsWith("-")) {
                 if (line.length() > 0)
                     lines.add(line.toString());
                 line = new StringBuilder();
@@ -146,7 +146,7 @@ public class Args {
         var result = new StringBuilder();
         for (var s : getCurrent()) {
             result.append(s);
-            result.append("\n" );
+            result.append("\n");
         }
         return result.toString();
     }

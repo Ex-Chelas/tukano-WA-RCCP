@@ -1,11 +1,11 @@
-package utils;
+package tukano.impl.cache;
 
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 public class RedisCache {
-    private static final String RedisHostname = "scc70730n70731.redis.cache.windows.net";
-    private static final String RedisKey = "h380NdJ5g3VaPKKYzfk5Wfie7qu0ZsSMqAzCaCUlFOo=";
+    private static final String RedisHostname = System.getenv("REDIS_HOSTNAME");
+    private static final String RedisKey = System.getenv("REDIS_KEY");
     private static final int REDIS_PORT = 6380;
     private static final int REDIS_TIMEOUT = 1000;
     private static final boolean Redis_USE_TLS = true;

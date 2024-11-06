@@ -79,7 +79,7 @@ public class Following {
     }
 
     public Following fromString(String str) {
-        String[] parts = str.split("," );
-        return new Following(parts[0].split("=" )[1], parts[1].split("=" )[1]);
+        String[] parts = str.split(",");
+        return new Following(parts[0].split("=")[1], parts[1].split("=")[1]);
     }
 }

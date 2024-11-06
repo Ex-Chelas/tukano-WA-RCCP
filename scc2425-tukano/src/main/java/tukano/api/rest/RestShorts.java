@@ -23,16 +23,16 @@ public interface RestShorts {
     String FOLLOWERS = "/followers";
 
     @POST
-    @Path("/{" + USER_ID + "}" )
+    @Path("/{" + USER_ID + "}")
     @Produces(MediaType.APPLICATION_JSON)
     Short createShort(@PathParam(USER_ID) String userId, @QueryParam(PWD) String password);
 
     @DELETE
-    @Path("/{" + SHORT_ID + "}" )
+    @Path("/{" + SHORT_ID + "}")
     void deleteShort(@PathParam(SHORT_ID) String shortId, @QueryParam(PWD) String password);
 
     @GET
-    @Path("/{" + SHORT_ID + "}" )
+    @Path("/{" + SHORT_ID + "}")
     @Produces(MediaType.APPLICATION_JSON)
     Short getShort(@PathParam(SHORT_ID) String shortId);
 

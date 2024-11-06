@@ -5,9 +5,10 @@ import utils.Hash;
 import java.util.logging.Logger;
 
 public class Token {
+    private static final Logger Log = Logger.getLogger(Token.class.getName());
+
     private static final String DELIMITER = "-";
     private static final long MAX_TOKEN_AGE = 300000;
-    private static final Logger Log = Logger.getLogger(Token.class.getName());
     private static String secret;
 
     public static void setSecret(String s) {
@@ -35,7 +36,7 @@ public class Token {
             Log.info(String.format("hash ok:%s, elapsed %s ok: %s\n", hmac.equals(bits[1]), elapsed, elapsed < MAX_TOKEN_AGE));
             return hmac.equals(bits[1]) && elapsed < MAX_TOKEN_AGE;
         } catch (Exception x) {
-            x.printStackTrace();
+            Log.info(String.format("Invalid token: %s\n", x));
             return false;
         }
     }

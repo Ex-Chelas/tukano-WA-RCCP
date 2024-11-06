@@ -36,9 +36,9 @@ public class CustomLoggingFilter implements ContainerRequestFilter, ContainerRes
 
             byte[] requestEntity = out.toByteArray();
             if (requestEntity.length == 0) {
-                b.append("\n" );
+                b.append("\n");
             } else {
-                b.append(new String(requestEntity)).append("\n" );
+                b.append(new String(requestEntity)).append("\n");
             }
             requestContext.setEntityStream(new ByteArrayInputStream(requestEntity));
 

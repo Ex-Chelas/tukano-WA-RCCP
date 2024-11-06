@@ -11,7 +11,7 @@ public class Hash {
     public static byte[] md5(byte[] data) {
         if (md5 == null) {
             try {
-                md5 = MessageDigest.getInstance("MD5" );
+                md5 = MessageDigest.getInstance("MD5");
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
@@ -24,7 +24,7 @@ public class Hash {
     public static byte[] sha256(byte[] data) {
         if (sha256 == null) {
             try {
-                sha256 = MessageDigest.getInstance("SHA-256" );
+                sha256 = MessageDigest.getInstance("SHA-256");
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }
@@ -38,7 +38,7 @@ public class Hash {
     synchronized public static String of(Object... values) {
         if (md5 == null) {
             try {
-                md5 = MessageDigest.getInstance("MD5" );
+                md5 = MessageDigest.getInstance("MD5");
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }

@@ -131,6 +131,7 @@ public interface Result<T> {
 
 /**
  * Represents a successful result of an operation
+ *
  * @param result
  * @param <T>
  */
@@ -158,6 +159,7 @@ record OkResult<T>(T result) implements Result<T> {
 
 /**
  * Represents an error result of an operation
+ *
  * @param error
  * @param <T>
  */

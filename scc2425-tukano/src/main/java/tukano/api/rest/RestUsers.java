@@ -22,20 +22,20 @@ public interface RestUsers {
 
 
     @GET
-    @Path("/{" + USER_ID + "}" )
+    @Path("/{" + USER_ID + "}")
     @Produces(MediaType.APPLICATION_JSON)
     User getUser(@PathParam(USER_ID) String userId, @QueryParam(PWD) String pwd);
 
 
     @PUT
-    @Path("/{" + USER_ID + "}" )
+    @Path("/{" + USER_ID + "}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     User updateUser(@PathParam(USER_ID) String userId, @QueryParam(PWD) String pwd, User user);
 
 
     @DELETE
-    @Path("/{" + USER_ID + "}" )
+    @Path("/{" + USER_ID + "}")
     @Produces(MediaType.APPLICATION_JSON)
     User deleteUser(@PathParam(USER_ID) String userId, @QueryParam(PWD) String pwd);
 

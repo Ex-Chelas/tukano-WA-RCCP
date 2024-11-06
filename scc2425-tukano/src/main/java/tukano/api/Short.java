@@ -14,19 +14,17 @@ import tukano.impl.Token;
  * A short is timestamped when it is created.
  */
 @Entity
-@Table(name = "short" )
+@Table(name = "short")
 public class Short {
     public static final String NAME = "shorts";
-
-    private String _rid; // Cosmos generated unique id of item
-    private String _ts; // timestamp of the last update to the item
-
     @Id
     String id;
     String ownerId;
     String blobUrl;
     long timestamp;
     int totalLikes;
+    private String _rid; // Cosmos generated unique id of item
+    private String _ts; // timestamp of the last update to the item
 
     public Short() {
     }
@@ -91,7 +89,7 @@ public class Short {
     }
 
     public Short fromString(String str) {
-        String[] parts = str.split("," );
+        String[] parts = str.split(",");
         return new Short(
                 parts[0].split("=")[1],
                 parts[1].split("=")[1],

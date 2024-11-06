@@ -1,39 +1,58 @@
-package utils;
+package tukano.impl.databse;
 
 import com.azure.cosmos.*;
 import com.azure.cosmos.models.CosmosItemRequestOptions;
-import com.azure.cosmos.models.CosmosItemResponse;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.util.CosmosPagedIterable;
 import tukano.api.Result;
+import utils.TryCatch;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
-import static tukano.api.Result.ErrorCode.errorCodeFromStatus;
-
-public class CosmosDB {
+/**
+ * Cosmos DB No SQL database implementation
+ */
+public class CosmosDB implements DBService {
     private static final Logger Log = Logger.getLogger(CosmosDB.class.getName());
-    private static final String CONNECTION_JDBC_URL = "jdbc:postgresql://c-scc70730n70731.e3hzdsb2yp333s.postgres.cosmos.azure.com:5432/citus?user=citus&password=Scc70730n70731&sslmode=require";
-    private static final String CONNECTION_URL = "https://scc70730n70731.documents.azure.com:443/"; // Replace with values from the Azure portal
-    private static final String DB_KEY = "Fr7lzoYdEQYIGIYVTZybFwFt07Xkv8cdzNP4y4VNECpiPdittHawa2r1cN15VUjX8ibqPvXhu5abACDbguLESw==";
-    private static final String DB_USER = "citus";
-    private static final String DB_NAME = "scc70730n70731";
+    private static final String CONNECTION_URL = System.getenv("COSMOSDB_CONNECTION_URL");
+    private static final String DB_KEY = System.getenv("COSMOSDB_KEY");
+    private static final String DB_NAME = System.getenv("COSMOSDB_NAME");
 
-    static CosmosClient client = new CosmosClientBuilder()
-            .endpoint(CONNECTION_URL)
-            .key(DB_KEY)
-            .gatewayMode()
-            // .directMode() // comment this if not to use direct mode
-            .consistencyLevel(ConsistencyLevel.SESSION)
-            .connectionSharingAcrossClientsEnabled(true)
-            .contentResponseOnWriteEnabled(true) // On write, return the object written
-            .buildClient();
+    private static CosmosClient client;
+    private static CosmosDB instance;
+    private static CosmosDatabase db;
+
+    private CosmosDB() {
+        client = createCosmosClient();
+    }
+
+    synchronized public static CosmosDB getInstance() {
+        if (instance == null)
+            instance = new CosmosDB();
+        return instance;
+    }
+
+    private static CosmosClient createCosmosClient() {
+        try {
+            return new CosmosClientBuilder()
+                    .endpoint(CONNECTION_URL)
+                    .key(DB_KEY)
+                    //.gatewayMode() //eduroam only works with gatewayMode
+                    .directMode() // for better performance
+                    .consistencyLevel(ConsistencyLevel.SESSION)
+                    .connectionSharingAcrossClientsEnabled(true)
+                    .contentResponseOnWriteEnabled(true) // On write, return the object written
+                    .buildClient();
+        } catch (Exception e) {
+            Log.severe("Error: " + e.getMessage());
+            throw e;
+        }
+    }
 
     /**
      * Get a container from the database with a specific name
@@ -60,6 +79,19 @@ public class CosmosDB {
         }
     }
 
+    /**
+     * Read all items from a container with a specific id and class
+     *
+     * @param container the container to read from
+     * @param clazz     the class of the items
+     * @return List - a list of items
+     */
+    public static <T> List<T> read(CosmosContainer container, String idName, String id, Class<T> clazz) {
+        String query = createQuery(container.getId(), idName, id);
+        CosmosPagedIterable<T> response = container.queryItems(query, new CosmosQueryRequestOptions(), clazz);
+        return response.iterableByPage().iterator().next().getResults();
+    }
+
 //    /**
 //     * Create an item in a container
 //     *
@@ -78,18 +110,6 @@ public class CosmosDB {
 //        }
 //    }
 //
-    /**
-     * Read all items from a container with a specific id and class
-     *
-     * @param container the container to read from
-     * @param clazz     the class of the items
-     * @return List - a list of items
-     */
-    public static <T> List<T> read(CosmosContainer container, String idName, String id, Class<T> clazz) {
-        String query = createQuery(container.getId(), idName, id);
-        CosmosPagedIterable<T> response = container.queryItems(query, new CosmosQueryRequestOptions(), clazz);
-        return response.iterableByPage().iterator().next().getResults();
-    }
 
     /**
      * Read all items from a container with a specific id, class and predicate
@@ -103,6 +123,21 @@ public class CosmosDB {
         String query = createQueryWPredicate(container.getId(), predicate);
         CosmosPagedIterable<T> response = container.queryItems(query, new CosmosQueryRequestOptions(), clazz);
         return response.iterableByPage().iterator().next().getResults();
+    }
+
+    /**
+     * Get one item from a container with a specific id, class and predicate
+     *
+     * @param container the container to read from
+     * @param idName    the id key
+     * @param id        the id value
+     * @param clazz     the class of the items
+     * @return Result - the result
+     */
+    public static <T> Result<T> getOne(Class<T> container, String idName, String id, Class<T> clazz) {
+        return TryCatch.tryCatch(Log, () -> getContainer(container).readItem(id, new PartitionKey(id), clazz).getItem());
+        // return tryCatch(() -> readOne(getContainer(container), idName, id, clazz));
+        // return read(getContainer(container), idName, id, clazz).stream().findFirst().map(Result::ok).orElse(Result.error(Result.ErrorCode.NOT_FOUND));
     }
 //
 //    /**
@@ -141,23 +176,20 @@ public class CosmosDB {
 //        }
 
 //    }
-    /**
-     * Get one item from a container with a specific id, class and predicate
-     *
-     * @param container the container to read from
-     * @param idName    the id key
-     * @param id        the id value
-     * @param clazz     the class of the items
-     * @return Result - the result
-     */
-    public static <T> Result<T> getOne(Class<T> container, String idName, String id, Class<T> clazz) {
-        return tryCatch(() -> getContainer(container).readItem(id, new PartitionKey(id), clazz).getItem());
-        // return tryCatch(() -> readOne(getContainer(container), idName, id, clazz));
-        // return read(getContainer(container), idName, id, clazz).stream().findFirst().map(Result::ok).orElse(Result.error(Result.ErrorCode.NOT_FOUND));
-    }
 
     public static <T> T readOne(CosmosContainer container, String idName, String id, Class<T> clazz) {
         return container.readItem(id, new PartitionKey(id), clazz).getItem();
+    }
+
+    /**
+     * Delete one item from a container
+     *
+     * @param container the container to delete the item from
+     * @param obj       the item to delete
+     * @return Result - the result
+     */
+    public static <T> Result<?> deleteOne(Class<T> container, T obj) {
+        return TryCatch.tryCatch(Log, () -> getContainer(container).deleteItem(obj, new CosmosItemRequestOptions()).getItem());
     }
 
 //    /**
@@ -173,17 +205,6 @@ public class CosmosDB {
 //    }
 
     /**
-     * Delete one item from a container
-     *
-     * @param container the container to delete the item from
-     * @param obj       the item to delete
-     * @return Result - the result
-     */
-    public static <T> Result<?> deleteOne(Class<T> container, T obj) {
-        return tryCatch(() -> getContainer(container).deleteItem(obj, new CosmosItemRequestOptions()).getItem());
-    }
-
-    /**
      * Update one item in a container
      *
      * @param container the container to update the item in
@@ -191,7 +212,7 @@ public class CosmosDB {
      * @return Result - the result
      */
     public static <T> Result<T> updateOne(Class<T> container, T obj) {
-        return tryCatch(() -> getContainer(container).upsertItem(obj).getItem());
+        return TryCatch.tryCatch(Log, () -> getContainer(container).upsertItem(obj).getItem());
     }
 
     /**
@@ -202,7 +223,7 @@ public class CosmosDB {
      * @return Result - the result
      */
     public static <T> Result<T> insertOne(Class<T> container, T obj) {
-        return tryCatch(() -> getContainer(container).createItem(obj).getItem());
+        return TryCatch.tryCatch(Log, () -> getContainer(container).createItem(obj).getItem());
     }
 
     /**
@@ -214,72 +235,11 @@ public class CosmosDB {
      * @return List - a list of items
      */
     public static <T> Result<List<T>> query(Class<T> container, String queryStr, Class<T> clazz) {
-        return tryCatch(() -> {
+        return TryCatch.tryCatch(Log, () -> {
             var res = getContainer(container).queryItems(queryStr, new CosmosQueryRequestOptions(), clazz);
             return res.stream().toList();
         });
     }
-
-    /**
-     * Execute a SQL query on a container.
-     *
-     * @param query       the query string
-     * @param returnClazz the class of the returned items (e.g., String.class for specific fields)
-     * @param clazz       the class of the container's items
-     * @param <T>         the container's item type
-     * @param <R>         the return type
-     * @return Result containing a list of items or an error
-     */
-    @SuppressWarnings("unchecked")
-    public static <T, R> Result<List<R>> sql(String query, Class<R> returnClazz, Class<T> clazz) {
-        return tryCatch(() -> {
-            boolean isCountQuery = query.toLowerCase().contains("count(*)");
-
-            // Alias count(*) as count to ensure consistent field naming
-            String parsedQuery = isCountQuery ? query.replace("count(*)", "count(1)") : query;
-
-            if (!returnClazz.equals(clazz)) {
-                var mapRes = getContainer(clazz).queryItems(parsedQuery, new CosmosQueryRequestOptions(), Map.class);
-
-                return mapRes.stream().map(m -> {
-                    try {
-                        if (isCountQuery) {
-                            return (R) m.get("$1");
-                        } else {
-                            // first value only
-                            return (R) m.values().iterator().next();
-                        }
-                    } catch (Exception e) {
-                        Log.severe("Error processing query result: " + e.getMessage());
-                        throw new RuntimeException("Failed to cast map to return type", e);
-                    }
-                }).toList();
-            } else {
-                var res = getContainer(clazz).queryItems(query, new CosmosQueryRequestOptions(), returnClazz);
-                return res.stream().toList();
-            }
-        });
-    }
-
-    /**
-     * Execute a SQL query safely, capturing and handling exceptions.
-     *
-     * @param supplierFunc the function to execute
-     * @param <T>          the return type of the function
-     * @return Result containing the value or an error
-     */
-    private static <T> Result<T> tryCatch(Supplier<T> supplierFunc) {
-        try {
-            return Result.ok(supplierFunc.get());
-        } catch (CosmosException ce) {
-            Log.severe("CosmosException: " + ce.getMessage());
-            return Result.error(errorCodeFromStatus(ce.getStatusCode()));
-        } catch (Exception x) {
-            Log.severe("Exception: " + x.getMessage());
-            return Result.error(Result.ErrorCode.INTERNAL_ERROR);
-        }
-    }
-
 
     /**
      * Opens a transaction equivalent in CosmosDB to a Hibernate transaction, and has access to all containers
@@ -293,7 +253,6 @@ public class CosmosDB {
             return Result.error(Result.ErrorCode.INTERNAL_ERROR);
         }
     }
-
 
     /**
      * Create a query string
@@ -316,5 +275,77 @@ public class CosmosDB {
      */
     private static String createQueryWPredicate(String containerName, String predicate) {
         return "Select * from " + containerName + " where " + predicate;
+    }
+
+    private synchronized void init() {
+        if (db != null)
+            return;
+        db = client.getDatabase(DB_NAME);
+    }
+
+    @Override
+    public <T> Result<T> getOne(String id, Class<T> clazz) {
+        return TryCatch.tryCatch(Log, () -> getContainer(clazz).readItem(id, new PartitionKey(id), clazz).getItem());
+    }
+
+    @Override
+    public <T> Result<T> insertOne(T obj) {
+        return TryCatch.tryCatch(Log, () -> getContainer(obj.getClass()).createItem(obj).getItem());
+    }
+
+    @Override
+    public <T> Result<T> updateOne(T obj) {
+        return TryCatch.tryCatch(Log, () -> getContainer(obj.getClass()).upsertItem(obj).getItem());
+    }
+
+    @Override
+    public <T> Result<T> deleteOne(T obj) {
+        try {
+            TryCatch.tryCatch(Log, () -> getContainer(obj.getClass()).deleteItem(obj, new CosmosItemRequestOptions()).getItem());
+            return Result.ok(obj);
+        } catch (Exception e) {
+            return Result.error(Result.ErrorCode.INTERNAL_ERROR);
+        }
+    }
+
+    /**
+     * Execute a SQL query on a container.
+     *
+     * @param query       the query string
+     * @param returnClazz the class of the returned items (e.g., String.class for specific fields)
+     * @param clazz       the class of the container's items
+     * @param <T>         the container's item type
+     * @param <R>         the return type
+     * @return Result containing a list of items or an error
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T, R> Result<List<R>> sql(String query, Class<R> returnClazz, Class<T> clazz) {
+        return TryCatch.tryCatch(Log, () -> {
+
+            boolean isCountQuery = query.toLowerCase().contains("count(*)");
+            String parsedQuery = query.replace("count(*)", "count(1)");
+
+            if (!returnClazz.equals(clazz)) {
+                var mapRes = getContainer(clazz).queryItems(parsedQuery, new CosmosQueryRequestOptions(), Map.class);
+
+                var resList = new ArrayList<R>();
+                mapRes.stream().forEach(m -> {
+                    try {
+                        if (isCountQuery) {
+                            resList.add((R) m.get("$1"));
+                        } else {
+                            resList.addAll(m.values());
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException("Failed to cast map to return type", e);
+                    }
+                });
+                return resList;
+            } else {
+                var res = getContainer(clazz).queryItems(query, new CosmosQueryRequestOptions(), returnClazz);
+                return res.stream().toList();
+            }
+        });
     }
 }

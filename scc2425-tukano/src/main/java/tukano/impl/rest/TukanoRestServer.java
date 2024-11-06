@@ -4,6 +4,12 @@ import jakarta.ws.rs.core.Application;
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 import tukano.impl.Token;
+import tukano.impl.databse.CosmosDB;
+import tukano.impl.databse.DB;
+import tukano.impl.databse.Hibernate;
+import tukano.impl.storage.CloudStorage;
+import tukano.impl.storage.FilesystemStorage;
+import tukano.impl.storage.Storage;
 import utils.Args;
 import utils.IP;
 
@@ -21,7 +27,7 @@ public class TukanoRestServer extends Application {
     static String SERVER_BASE_URI = "http://%s:%s/rest";
 
     static {
-        System.setProperty("java.util.logging.SimpleFormatter.format", "%4$s: %5$s" );
+        System.setProperty("java.util.logging.SimpleFormatter.format", "%4$s: %5$s");
     }
 
     private final Set<Object> singletons = new HashSet<>();
@@ -37,8 +43,29 @@ public class TukanoRestServer extends Application {
     public static void main(String[] args) throws Exception {
         Args.use(args);
 
-        Token.setSecret(Args.valueOf("-secret", "secret" ));
-//		Props.load( Args.valueOf("-props", "").split(","));
+        Token.setSecret(Args.valueOf("-secret", ""));
+
+        switch (Args.valueOf("-db", "cosmos")) {
+            case "cosmos":
+                DB.configureInstance(CosmosDB.getInstance());
+                break;
+            case "hibernate":
+                DB.configureInstance(Hibernate.getInstance());
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid DB type");
+        }
+
+        switch (Args.valueOf("-storage", "azure")) {
+            case "azure":
+                Storage.configureInstance(CloudStorage.getInstance(System.getenv("STORAGE_CONNECTION_STRING")));
+                break;
+            case "local":
+                Storage.configureInstance(FilesystemStorage.getInstance(System.getenv("STORAGE_CONNECTION_STRING")));
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid storage type");
+        }
 
         new TukanoRestServer().start();
     }
@@ -49,6 +76,7 @@ public class TukanoRestServer extends Application {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public Set<Object> getSingletons() {
         return singletons;
     }

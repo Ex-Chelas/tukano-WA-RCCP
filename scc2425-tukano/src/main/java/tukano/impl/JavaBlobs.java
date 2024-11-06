@@ -3,8 +3,7 @@ package tukano.impl;
 import tukano.api.Blobs;
 import tukano.api.Result;
 import tukano.impl.rest.TukanoRestServer;
-import tukano.impl.storage.BlobStorage;
-import tukano.impl.storage.CloudStorage;
+import tukano.impl.storage.Storage;
 import utils.Hash;
 import utils.Hex;
 
@@ -14,15 +13,14 @@ import static java.lang.String.format;
 import static tukano.api.Result.ErrorCode.FORBIDDEN;
 import static tukano.api.Result.error;
 
+
 public class JavaBlobs implements Blobs {
 
     private static final Logger Log = Logger.getLogger(JavaBlobs.class.getName());
     private static Blobs instance;
-    private final BlobStorage storage;
     public String baseURI;
 
     private JavaBlobs() {
-        storage = new CloudStorage();
         baseURI = String.format("%s/%s/", TukanoRestServer.serverURI, Blobs.NAME);
     }
 
@@ -39,7 +37,7 @@ public class JavaBlobs implements Blobs {
         if (!validBlobId(blobId, token))
             return error(FORBIDDEN);
 
-        return storage.write(toPath(blobId), bytes);
+        return Storage.write(toPath(blobId), bytes);
     }
 
     @Override
@@ -49,7 +47,7 @@ public class JavaBlobs implements Blobs {
         if (!validBlobId(blobId, token))
             return error(FORBIDDEN);
 
-        return storage.read(toPath(blobId));
+        return Storage.read(toPath(blobId));
     }
 
     @Override
@@ -59,7 +57,7 @@ public class JavaBlobs implements Blobs {
         if (!validBlobId(blobId, token))
             return error(FORBIDDEN);
 
-        return storage.delete(toPath(blobId));
+        return Storage.delete(toPath(blobId));
     }
 
     @Override
@@ -69,7 +67,7 @@ public class JavaBlobs implements Blobs {
         if (!Token.isValid(token, userId))
             return error(FORBIDDEN);
 
-        return storage.delete(toPath(userId));
+        return Storage.delete(toPath(userId));
     }
 
     private boolean validBlobId(String blobId, String token) {
@@ -77,6 +75,6 @@ public class JavaBlobs implements Blobs {
     }
 
     private String toPath(String blobId) {
-        return blobId.replace("+", "/" );
+        return blobId.replace("+", "/");
     }
 }
