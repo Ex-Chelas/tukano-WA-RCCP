@@ -14,7 +14,7 @@ import tukano.impl.Token;
  * A short is timestamped when it is created.
  */
 @Entity
-@Table(name = "short")
+@Table(name = "shorts")
 public class Short {
     public static final String NAME = "shorts";
     @Id

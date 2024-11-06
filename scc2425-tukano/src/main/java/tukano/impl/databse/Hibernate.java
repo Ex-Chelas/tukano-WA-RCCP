@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 public class Hibernate implements DBService {
     private static final Logger Log = Logger.getLogger(Hibernate.class.getName());
 
-    private static final String HIBERNATE_CFG_FILE = "hibernate.cfg.xml";
+    private static final String HIBERNATE_CFG_FILE = "scc2425-tukano/src/main/webapp/WEB-INF/classes/hibernate.cfg.xml";
     private static Hibernate instance;
     private final SessionFactory sessionFactory;
 

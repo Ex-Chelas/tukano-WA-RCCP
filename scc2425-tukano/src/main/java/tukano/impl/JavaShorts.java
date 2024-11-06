@@ -52,7 +52,7 @@ public class JavaShorts implements Shorts {
         if (shortId == null)
             return error(BAD_REQUEST);
 
-        var query = format("SELECT count(*) FROM Likes l WHERE l.shortId = '%s'", shortId);
+        var query = format("SELECT count(*) FROM likes l WHERE l.shortId = '%s'", shortId);
         var likes = DB.sql(query, Long.class, Likes.class);
         //Sort id is hardcoded FIND A WAY TO FIX THIS
         return errorOrValue(DB.getOne(shortId, Short.class), shorty -> shorty.copyWithLikes_And_Token(likes.value().get(0)));
@@ -68,7 +68,7 @@ public class JavaShorts implements Shorts {
 
                     DB.deleteOne(shorty);
 
-                    var query = format("DELETE Likes FROM Likes l WHERE l.shortId = '%s'", shortId);
+                    var query = format("DELETE l FROM likes l WHERE l.shortId = '%s'", shortId);
                     DB.sql(query, Void.class, Likes.class);
 
                     return JavaBlobs.getInstance().delete(shorty.getBlobUrl(), Token.get());
@@ -80,7 +80,7 @@ public class JavaShorts implements Shorts {
     public Result<List<String>> getShorts(String userId) {
         Log.info(() -> format("getShorts : userId = %s\n", userId));
 
-        var query = format("SELECT s.id FROM Shorts s WHERE s.ownerId = '%s'", userId);
+        var query = format("SELECT s.id FROM shorts s WHERE s.ownerId = '%s'", userId);
         Log.info(() -> "Executing query: " + query);
 
         Result<List<String>> queryResult = DB.sql(query, String.class, Short.class);
@@ -111,7 +111,7 @@ public class JavaShorts implements Shorts {
     public Result<List<String>> followers(String userId, String password) {
         Log.info(() -> format("followers : userId = %s, pwd = %s\n", userId, password));
 
-        var query = format("SELECT f.follower FROM Following f WHERE f.followee = '%s'", userId);
+        var query = format("SELECT f.follower FROM following f WHERE f.followee = '%s'", userId);
         return errorOrValue(okUser(userId, password), DB.sql(query, String.class, Following.class));
     }
 
@@ -132,7 +132,7 @@ public class JavaShorts implements Shorts {
 
         return errorOrResult(getShort(shortId), shorty -> {
 
-            var query = format("SELECT l.userId FROM Likes l WHERE l.shortId = '%s'", shortId);
+            var query = format("SELECT l.userId FROM likes l WHERE l.shortId = '%s'", shortId);
 
             return errorOrValue(okUser(shorty.getOwnerId(), password), DB.sql(query, String.class, Likes.class));
         });

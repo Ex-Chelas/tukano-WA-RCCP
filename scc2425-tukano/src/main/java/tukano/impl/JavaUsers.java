@@ -15,9 +15,8 @@ import static tukano.api.Result.ErrorCode.FORBIDDEN;
 import static tukano.api.Result.*;
 
 public class JavaUsers implements Users {
-
     private static final Logger Log = Logger.getLogger(JavaUsers.class.getName());
-    private static final String USER_ID_KEY = "id";
+
     private static Users instance;
 
     private JavaUsers() {
@@ -86,7 +85,7 @@ public class JavaUsers implements Users {
     public Result<List<User>> searchUsers(String pattern) {
         Log.info(() -> format("searchUsers : patterns = %s\n", pattern));
 
-        var query = format("SELECT * FROM User u WHERE UPPER(u.id) LIKE '%%%s%%'", pattern.toUpperCase());
+        var query = format("SELECT * FROM users u WHERE UPPER(u.id) LIKE '%%%s%%'", pattern.toUpperCase());
         var hits = DB.sql(query, User.class, User.class)
                 .value()
                 .stream()
