@@ -34,15 +34,15 @@ public class TukanoRestServer extends Application {
     private final Set<Class<?>> resources = new HashSet<>();
 
     protected TukanoRestServer() {
-        serverURI = String.format(SERVER_BASE_URI, "127.0.0.1"/*IP.hostAddress()*/, PORT);
+        serverURI = String.format(SERVER_BASE_URI, IP.hostAddress(), PORT);
         resources.add(RestBlobsResource.class);
         resources.add(RestUsersResource.class);
         resources.add(RestShortsResource.class);
     }
 
     public static void main(String[] args) throws Exception {
-        Args.use(args);
-
+        Args.use(System.getenv("ARGS").split(" "));
+        System.getenv().forEach((key, value) -> System.out.println(key + " = " + value));
         Token.setSecret(Args.valueOf("-secret", ""));
 
         switch (Args.valueOf("-db", "cosmos")) {
