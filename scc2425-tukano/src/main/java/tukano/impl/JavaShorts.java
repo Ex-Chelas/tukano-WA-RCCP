@@ -7,6 +7,8 @@ import tukano.impl.data.Likes;
 import tukano.impl.databse.DB;
 import tukano.impl.rest.TukanoRestServer;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -138,19 +140,64 @@ public class JavaShorts implements Shorts {
         });
     }
 
+//    @Override
+//    public Result<List<String>> getFeed(String userId, String password) {
+//        Log.info(() -> format("getFeed : userId = %s, pwd = %s\n", userId, password));
+//
+//        final var QUERY_FMT = """
+//                SELECT s.id, s.timestamp FROM Shorts s WHERE s.ownerId = '%s'
+//                UNION
+//                SELECT s.id, s.timestamp FROM Shorts s, Following f
+//                	WHERE
+//                		f.followee = s.ownerId AND f.follower = '%s'
+//                ORDER BY s.timestamp DESC""";
+//
+//        return errorOrValue(okUser(userId, password), DB.sql(format(QUERY_FMT, userId, userId), String.class, Short.class));
+//    }
+
     @Override
     public Result<List<String>> getFeed(String userId, String password) {
-        Log.info(() -> format("getFeed : userId = %s, pwd = %s\n", userId, password));
+        Log.info(() -> format("getFeed : userId = %s\n", userId));
 
-        final var QUERY_FMT = """
-                SELECT s.id, s.timestamp FROM Shorts s WHERE s.ownerId = '%s'
-                UNION
-                SELECT s.id, s.timestamp FROM Shorts s, Following f
-                	WHERE
-                		f.followee = s.ownerId AND f.follower = '%s'
-                ORDER BY s.timestamp DESC""";
+        return errorOrResult(okUser(userId, password), user -> {
 
-        return errorOrValue(okUser(userId, password), DB.sql(format(QUERY_FMT, userId, userId), String.class, Short.class));
+            final var USER_SHORTS = """
+                    SELECT * FROM Shorts s WHERE s.ownerId = '%s'
+            """;
+
+            var userOwnShortsQuery = format(USER_SHORTS, userId);
+
+            var userFollowingQuery = format("SELECT f.followee FROM Following f WHERE f.follower = '%s'", userId);
+
+            var userOwnShorts = DB.sql(userOwnShortsQuery, Short.class, Short.class);
+
+            if(!userOwnShorts.isOK()){
+                return error(userOwnShorts.error());
+            }
+
+            var userFollowing = DB.sql(userFollowingQuery, String.class, Following.class);
+
+            if(!userFollowing.isOK()){
+                return error(userFollowing.error());
+            }
+
+            var feed = new ArrayList<Short>();
+
+            userFollowing.value().forEach(followerId -> {
+                var followedUserShorts = DB.sql(format(USER_SHORTS, followerId), Short.class, Short.class);
+                followedUserShorts.value().forEach(s -> {
+                    if (s != null) {
+                        feed.add(s);
+                    }
+                });
+            });
+
+            return Result.ok(feed.stream()
+                    .sorted(Comparator.comparing(Short::getTimestamp).reversed())
+                    .map(Short::getId).toList());
+        }
+        );
+
     }
 
     protected Result<User> okUser(String userId, String pwd) {
@@ -187,6 +234,7 @@ public class JavaShorts implements Shorts {
                         }
                     }
 
+                    //TODO: Not tested because we are not uploading the blob, so we can't assure deletion
                     JavaBlobs.getInstance().delete(shorty.getBlobUrl(), Token.get());
                 }
                 var queryFollows = format("SELECT * FROM Following f WHERE f.follower = '%s' OR f.followee = '%s'", userId, userId);
