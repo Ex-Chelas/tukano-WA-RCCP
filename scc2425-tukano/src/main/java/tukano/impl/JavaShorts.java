@@ -80,9 +80,20 @@ public class JavaShorts implements Shorts {
     public Result<List<String>> getShorts(String userId) {
         Log.info(() -> format("getShorts : userId = %s\n", userId));
 
-        var query = format("SELECT s.shortId FROM Short s WHERE s.ownerId = '%s'", userId);
-        return errorOrValue(okUser(userId), CosmosDB.sql(query, String.class, Short.class));
+        var query = format("SELECT s.id FROM Shorts s WHERE s.ownerId = '%s'", userId);
+        Log.info(() -> "Executing query: " + query);
+
+        Result<List<String>> queryResult = CosmosDB.sql(query, String.class, Short.class);
+
+        if (queryResult.isOK()) {
+            Log.info(() -> "Query returned " + queryResult.value().size() + " shortId(s).");
+        } else {
+            Log.warning(() -> "Query failed with error: " + queryResult.error());
+        }
+
+        return queryResult;
     }
+
 
     @Override
     public Result<Void> follow(String userId1, String userId2, boolean isFollowing, String password) {
@@ -131,9 +142,9 @@ public class JavaShorts implements Shorts {
         Log.info(() -> format("getFeed : userId = %s, pwd = %s\n", userId, password));
 
         final var QUERY_FMT = """
-                SELECT s.shortId, s.timestamp FROM Short s WHERE s.ownerId = '%s'
+                SELECT s.shortId, s.timestamp FROM Shorts s WHERE s.ownerId = '%s'
                 UNION
-                SELECT s.shortId, s.timestamp FROM Short s, Following f
+                SELECT s.shortId, s.timestamp FROM Shorts s, Following f
                 	WHERE
                 		f.followee = s.ownerId AND f.follower = '%s'
                 ORDER BY s.timestamp DESC""";
