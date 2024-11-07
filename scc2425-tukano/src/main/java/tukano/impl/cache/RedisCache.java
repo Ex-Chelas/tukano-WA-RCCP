@@ -10,6 +10,8 @@ public class RedisCache {
     private static final int REDIS_TIMEOUT = 1000;
     private static final boolean Redis_USE_TLS = true;
 
+    private static boolean cacheEnabled = false;
+
     private static JedisPool instance;
 
     public synchronized static JedisPool getCachePool() {
@@ -27,5 +29,13 @@ public class RedisCache {
         poolConfig.setBlockWhenExhausted(true);
         instance = new JedisPool(poolConfig, RedisHostname, REDIS_PORT, REDIS_TIMEOUT, RedisKey, Redis_USE_TLS);
         return instance;
+    }
+
+    public static void enableCache() {
+        cacheEnabled = true;
+    }
+
+    public static boolean isCacheEnabled() {
+        return cacheEnabled;
     }
 }
