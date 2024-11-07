@@ -1,0 +1,48 @@
+config:
+  target: http://192.168.1.95:8080/rest
+  phases:
+    - name: simple_post
+      duration: 1
+      arrivalRate: 1
+  payload:
+    path: ./data/users.csv
+    order: sequence
+    skipHeader: true
+    delimiter: ","
+    skipEmptyLines: true
+    fields:
+      - "id"
+      - "pwd"
+      - "email"
+      - "displayName"
+scenarios:
+  - name: TuKanoRegister
+    flow:
+      - post:
+          url: /users/
+          headers:
+            Content-Type: application/json
+          json:
+            id: "{{ id }}"
+            pwd: "{{ pwd }}"
+            email: "{{ email }}"
+            displayName: "{{ displayName }}"
+      - post:
+          url: /shorts/{{ id }}
+          qs:
+            pwd: "{{ pwd }}"
+          capture:
+            - json: "$.id"
+              as: "shortId"
+      - get:
+          url: /shorts/{{ shortId }}
+          qs:
+            pwd: "{{ pwd }}"
+      - get:
+          url: /shorts/{{ shortId }}
+          qs:
+            pwd: "{{ pwd }}"
+      - get:
+          url: /shorts/{{ shortId }}
+          qs:
+            pwd: "{{ pwd }}"

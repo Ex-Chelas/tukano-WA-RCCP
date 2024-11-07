@@ -5,14 +5,10 @@
  */
 module.exports = {
     uploadRandomizedUser,
-    processRegisterReply
-}
+    uploadRandomizedUpdateData
+};
 
-
-const fs = require('fs') // Needed for access to blobs.
-
-var registeredUsers = []
-var images = []
+const fs = require('fs'); // Needed for access to blobs.
 
 // All endpoints starting with the following prefixes will be aggregated in the same for the statistics
 var statsPrefix = [["/rest/media/", "GET"],
@@ -32,14 +28,13 @@ global.myProcessEndpoint = function (str, method) {
 // Returns a random username constructed from lowercase letters.
 function randomUsername(char_limit) {
     const letters = 'abcdefghijklmnopqrstuvwxyz';
-    let username = '';
-    let num_chars = Math.floor(Math.random() * char_limit);
+    let username = 'user';
+    let num_chars = Math.floor(Math.random() * char_limit + 5); // Random number of characters between 5 and (5 + char_limit)
     for (let i = 0; i < num_chars; i++) {
         username += letters[Math.floor(Math.random() * letters.length)];
     }
     return username;
 }
-
 
 // Returns a random password, drawn from printable ASCII characters
 function randomPassword(pass_len) {
@@ -47,7 +42,6 @@ function randomPassword(pass_len) {
     const lim_values = 94;
 
     let password = '';
-    let num_chars = Math.floor(Math.random() * pass_len);
     for (let i = 0; i < pass_len; i++) {
         let chosen_char = Math.floor(Math.random() * lim_values) + skip_value;
         if (chosen_char == "'" || chosen_char == '"')
@@ -59,30 +53,39 @@ function randomPassword(pass_len) {
 }
 
 /**
- * Process reply of the user registration.
- */
-function processRegisterReply(requestParams, response, context, ee, next) {
-    if (typeof response.body !== 'undefined' && response.body.length > 0) {
-        registeredUsers.push(response.body);
-    }
-    return next();
-}
-
-/**
  * Register a random user.
  */
-
 function uploadRandomizedUser(requestParams, context, ee, next) {
-    let username = randomUsername(10);
+    let username = randomUsername(13);
     let password = randomPassword(15);
     let email = username + "@campus.fct.unl.pt";
 
+    if (context.vars === undefined) {
+        context.vars = {};
+    }
+
     const user = {
-        userId: username,
+        id: username,
         pwd: password,
         email: email,
         displayName: username
     };
     requestParams.body = JSON.stringify(user);
+
+    context.vars.userId = username;
+    context.vars.pwd = password;
+
     return next();
-} 
+}
+
+/**
+ * Upload randomized data for updating a user.
+ */
+function uploadRandomizedUpdateData(requestParams, context, ee, next) {
+    let newDisplayName = randomUsername(10);
+    const updateData = {
+        displayName: newDisplayName
+    };
+    requestParams.body = JSON.stringify(updateData);
+    return next();
+}

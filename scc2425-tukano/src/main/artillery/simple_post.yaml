@@ -1,5 +1,5 @@
 config:
-  target: http://127.0.0.1:8080/tukano/rest
+  target: http://192.168.1.95:8080/rest
   phases:
     - name: simple_post
       duration: 1
@@ -12,7 +12,7 @@ config:
     delimiter: "," # standard delimiter
     skipEmptyLines: true # not important in our case
     fields:
-      - "userId"
+      - "id"
       - "pwd"
       - "email"
       - "displayName"
@@ -24,7 +24,7 @@ scenarios:
           headers:
             Content-Type: application/json
           json:
-            userId: "{{ userId }}" # this parameter is filled from the fields above
+            id: "{{ id }}" # this parameter is filled from the fields above
             pwd: "{{ pwd }}"
             email: "{{ email }}"
             displayName: "{{ displayName }}"

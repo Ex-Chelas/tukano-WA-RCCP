@@ -1,0 +1,48 @@
+config:
+  target: http://192.168.1.95:8080/rest
+  plugins:
+    metrics-by-endpoint: {}
+  processor: ./test-utils.js
+  phases:
+    - name: "Warm up"
+      duration: 10
+      arrivalRate: 1
+      rampTo: 5
+    - name: "Main test"
+      duration: 30
+      arrivalRate: 10
+scenarios:
+  - name: "User lifecycle"
+    flow:
+      - post:
+          url: "/users/"
+          headers:
+            Content-Type: application/json
+            Accept: application/json
+          beforeRequest: "uploadRandomizedUser"
+      - get:
+          url: "/users/{{ userId }}"
+          headers:
+            Accept: application/json
+          qs:
+            pwd: "{{ pwd }}"
+      - put:
+          url: "/users/{{ userId }}"
+          headers:
+            Content-Type: application/json
+            Accept: application/json
+          qs:
+            pwd: "{{ pwd }}"
+          beforeRequest: "uploadRandomizedUpdateData"
+      - get:
+          url: "/users/{{ userId }}"
+          headers:
+            Accept: application/json
+          qs:
+            pwd: "{{ pwd }}"
+      - delete:
+          url: "/users/{{ userId }}"
+          headers:
+            Accept: application/json
+          qs:
+            pwd: "{{ pwd }}"
