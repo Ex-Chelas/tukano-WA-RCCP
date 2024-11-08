@@ -16,6 +16,7 @@ import utils.Args;
 public class Configuration {
     private static final String ARGS_KEY = "ARGS";
     private static final String STORAGE_CONNECTION_STRING_KEY = "STORAGE_CONNECTION_STRING";
+    private static final String DB_CONNECTION_URL_KEY = "DB_CONNECTION_URL";
 
     private static final String ARGS_SPLITTER = " ";
 
@@ -30,21 +31,21 @@ public class Configuration {
         Token.setSecret(Args.valueOf(SECRET_FLAG, ""));
 
         switch (Args.valueOf(DB_FLAG, "cosmos")) {
-            case "cosmos":
-                DB.configureInstance(CosmosDB.getInstance());
+            case "cosmos": // has region
+                DB.configureInstance(CosmosDB.getInstance(System.getenv(DB_CONNECTION_URL_KEY)));
                 break;
-            case "hibernate":
-                DB.configureInstance(Hibernate.getInstance());
+            case "hibernate": // doesnt have region
+                DB.configureInstance(Hibernate.getInstance(System.getenv(DB_CONNECTION_URL_KEY)));
                 break;
             default:
                 throw new IllegalArgumentException("Invalid DB type");
         }
 
         switch (Args.valueOf(STORAGE_FLAG, "azure")) {
-            case "azure":
+            case "azure": // has region
                 Storage.configureInstance(CloudStorage.getInstance(System.getenv(STORAGE_CONNECTION_STRING_KEY)));
                 break;
-            case "local":
+            case "local": // doesnt have region
                 Storage.configureInstance(FilesystemStorage.getInstance(System.getenv(STORAGE_CONNECTION_STRING_KEY)));
                 break;
             default:

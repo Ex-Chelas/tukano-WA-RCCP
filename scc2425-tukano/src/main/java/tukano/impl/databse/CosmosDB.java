@@ -19,30 +19,32 @@ import java.util.logging.Logger;
  */
 public class CosmosDB implements DBService {
     private static final Logger Log = Logger.getLogger(CosmosDB.class.getName());
-    private static final String CONNECTION_URL = System.getenv("COSMOSDB_CONNECTION_URL");
     private static final String DB_KEY = System.getenv("COSMOSDB_KEY");
     private static final String DB_NAME = System.getenv("COSMOSDB_NAME");
+    private static final String REGION = System.getenv("COSMOS_DB_REGION");
 
     private static CosmosClient client;
     private static CosmosDB instance;
     private static CosmosDatabase db;
 
-    private CosmosDB() {
-        client = createCosmosClient();
+    private CosmosDB(String connectionString) {
+        client = createCosmosClient(connectionString);
     }
 
-    synchronized public static CosmosDB getInstance() {
+    synchronized public static CosmosDB getInstance(String connectionString) {
         if (instance == null)
-            instance = new CosmosDB();
+            instance = new CosmosDB(connectionString);
         return instance;
     }
 
-    private static CosmosClient createCosmosClient() {
+    private static CosmosClient createCosmosClient(String connectionString) {
         try {
             return new CosmosClientBuilder()
-                    .endpoint(CONNECTION_URL)
+                    .endpoint(connectionString)
                     .key(DB_KEY)
-                    //.gatewayMode() //eduroam only works with gatewayMode
+                    .multipleWriteRegionsEnabled(true)
+                    .preferredRegions(List.of(REGION))
+                    //.gatewayMode() // eduroam only works with gatewayMode
                     .directMode() // for better performance
                     .consistencyLevel(ConsistencyLevel.SESSION)
                     .connectionSharingAcrossClientsEnabled(true)

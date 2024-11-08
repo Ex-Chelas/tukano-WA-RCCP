@@ -27,7 +27,7 @@ public class Hibernate implements DBService {
     private static Hibernate instance;
     private final SessionFactory sessionFactory;
 
-    private Hibernate() {
+    private Hibernate(String connectionString) {
         try {
             sessionFactory = new Configuration().configure(new File(HIBERNATE_CFG_FILE)).buildSessionFactory();
         } catch (Exception e) {
@@ -40,9 +40,9 @@ public class Hibernate implements DBService {
      * Returns the Hibernate instance, initializing if necessary. Requires a
      * configuration file (hibernate.cfg.xml) in the root directory.
      */
-    synchronized public static Hibernate getInstance() {
+    synchronized public static Hibernate getInstance(String connectionString) {
         if (instance == null)
-            instance = new Hibernate();
+            instance = new Hibernate(connectionString);
         return instance;
     }
 
