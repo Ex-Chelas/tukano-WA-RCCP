@@ -16,7 +16,8 @@ import static tukano.api.Result.*;
 
 public class JavaUsers implements Users {
     private static final Logger Log = Logger.getLogger(JavaUsers.class.getName());
-
+    private static final User systemUser = new User("0", "DEOXIS", "system@killteam.xpto", "Tukano Recommends");
+    private static boolean isFirstUser = true;
     private static Users instance;
 
     private JavaUsers() {
@@ -31,11 +32,17 @@ public class JavaUsers implements Users {
     @Override
     public Result<String> createUser(User user) {
         Log.info(() -> format("createUser : %s\n", user));
+        if (isFirstUser) {
+            DB.insertOne(systemUser);
+            isFirstUser = false;
+        }
 
-        if (badUserInfo(user))
+        if (badUserInfo(user)) {
             return error(BAD_REQUEST);
-
-        return errorOrValue(DB.insertOne(user), user.getId());
+        }
+        var createUserResponse = errorOrValue(DB.insertOne(user), user.getId());
+        JavaShorts.getInstance().follow(user.getId(), systemUser.getId(), true, user.pwd());
+        return createUserResponse;
     }
 
     @Override

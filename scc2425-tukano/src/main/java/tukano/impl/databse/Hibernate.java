@@ -40,7 +40,7 @@ public class Hibernate implements DBService {
      * Returns the Hibernate instance, initializing if necessary. Requires a
      * configuration file (hibernate.cfg.xml) in the root directory.
      */
-    synchronized public static Hibernate getInstance(String connectionString) {
+    synchronized public static Hibernate getInstance(String connectionString, String primaryRegion) {
         if (instance == null)
             instance = new Hibernate(connectionString);
         return instance;

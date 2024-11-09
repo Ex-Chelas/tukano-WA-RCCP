@@ -14,6 +14,7 @@ import java.util.Optional;
 /**
  * Azure Functions with HTTP Trigger.
  * This is just the code of the cloud function, the actual deployment is done in a != project.
+ * This function increments the view count of a short by downloads.
  */
 public class ViewCounterFunction {
     // Function and trigger names

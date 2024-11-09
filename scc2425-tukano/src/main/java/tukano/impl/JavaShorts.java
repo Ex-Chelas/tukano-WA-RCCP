@@ -21,7 +21,7 @@ import static tukano.api.Result.*;
 public class JavaShorts implements Shorts {
 
     private static final Logger Log = Logger.getLogger(JavaShorts.class.getName());
-
+    private static final String SYSTEM_USER_ID = "0";
     private static Shorts instance;
 
     private JavaShorts() {
@@ -96,11 +96,12 @@ public class JavaShorts implements Shorts {
         return queryResult;
     }
 
-
     @Override
     public Result<Void> follow(String userId1, String userId2, boolean isFollowing, String password) {
         Log.info(() -> format("follow : userId1 = %s, userId2 = %s, isFollowing = %s, pwd = %s\n", userId1, userId2, isFollowing, password));
 
+        if (userId2.equals(SYSTEM_USER_ID))
+            return error(FORBIDDEN);
 
         return errorOrResult(okUser(userId1, password), user -> {
             var f = new Following(userId1, userId2);
@@ -113,7 +114,7 @@ public class JavaShorts implements Shorts {
     public Result<List<String>> followers(String userId, String password) {
         Log.info(() -> format("followers : userId = %s, pwd = %s\n", userId, password));
 
-        var query = format("SELECT f.follower FROM following f WHERE f.followee = '%s'", userId);
+        var query = format("SELECT f.follower FROM following f WHERE f.followee = '%s' and f.follower <>'%s'", userId, SYSTEM_USER_ID);
         return errorOrValue(okUser(userId, password), DB.sql(query, String.class, Following.class));
     }
 
@@ -140,62 +141,45 @@ public class JavaShorts implements Shorts {
         });
     }
 
-//    @Override
-//    public Result<List<String>> getFeed(String userId, String password) {
-//        Log.info(() -> format("getFeed : userId = %s, pwd = %s\n", userId, password));
-//
-//        final var QUERY_FMT = """
-//                SELECT s.id, s.timestamp FROM Shorts s WHERE s.ownerId = '%s'
-//                UNION
-//                SELECT s.id, s.timestamp FROM Shorts s, Following f
-//                	WHERE
-//                		f.followee = s.ownerId AND f.follower = '%s'
-//                ORDER BY s.timestamp DESC""";
-//
-//        return errorOrValue(okUser(userId, password), DB.sql(format(QUERY_FMT, userId, userId), String.class, Short.class));
-//    }
-
     @Override
     public Result<List<String>> getFeed(String userId, String password) {
         Log.info(() -> format("getFeed : userId = %s\n", userId));
 
         return errorOrResult(okUser(userId, password), user -> {
 
-            final var USER_SHORTS = """
-                    SELECT * FROM Shorts s WHERE s.ownerId = '%s'
-            """;
+                    final var USER_SHORTS = "SELECT * FROM Shorts s WHERE s.ownerId = '%s'";
 
-            var userOwnShortsQuery = format(USER_SHORTS, userId);
+                    var userOwnShortsQuery = format(USER_SHORTS, userId);
 
-            var userFollowingQuery = format("SELECT f.followee FROM Following f WHERE f.follower = '%s'", userId);
+                    var userFollowingQuery = format("SELECT f.followee FROM Following f WHERE f.follower = '%s'", userId);
 
-            var userOwnShorts = DB.sql(userOwnShortsQuery, Short.class, Short.class);
+                    var userOwnShorts = DB.sql(userOwnShortsQuery, Short.class, Short.class);
 
-            if(!userOwnShorts.isOK()){
-                return error(userOwnShorts.error());
-            }
-
-            var userFollowing = DB.sql(userFollowingQuery, String.class, Following.class);
-
-            if(!userFollowing.isOK()){
-                return error(userFollowing.error());
-            }
-
-            var feed = new ArrayList<Short>();
-
-            userFollowing.value().forEach(followerId -> {
-                var followedUserShorts = DB.sql(format(USER_SHORTS, followerId), Short.class, Short.class);
-                followedUserShorts.value().forEach(s -> {
-                    if (s != null) {
-                        feed.add(s);
+                    if (!userOwnShorts.isOK()) {
+                        return error(userOwnShorts.error());
                     }
-                });
-            });
 
-            return Result.ok(feed.stream()
-                    .sorted(Comparator.comparing(Short::getTimestamp).reversed())
-                    .map(Short::getId).toList());
-        }
+                    var userFollowing = DB.sql(userFollowingQuery, String.class, Following.class);
+
+                    if (!userFollowing.isOK()) {
+                        return error(userFollowing.error());
+                    }
+
+                    var feed = new ArrayList<Short>();
+
+                    userFollowing.value().forEach(followerId -> {
+                        var followedUserShorts = DB.sql(format(USER_SHORTS, followerId), Short.class, Short.class);
+                        followedUserShorts.value().forEach(s -> {
+                            if (s != null) {
+                                feed.add(s);
+                            }
+                        });
+                    });
+
+                    return Result.ok(feed.stream()
+                            .sorted(Comparator.comparing(Short::getTimestamp).reversed())
+                            .map(Short::getId).toList());
+                }
         );
 
     }

@@ -7,6 +7,8 @@ import tukano.api.Result;
 import tukano.api.Result.ErrorCode;
 import utils.TryCatch;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -17,38 +19,59 @@ public class CloudStorage implements BlobStorage {
     private static final Logger Log = Logger.getLogger(CloudStorage.class.getName());
     private static final String CONTAINER_NAME = "shorts";
     private static CloudStorage instance;
-    private static BlobContainerClient containerClient;
+    private static HashMap<String, BlobContainerClient> containersClients;
+    private boolean isPrimary = true;
 
-    private CloudStorage(String connectionString) {
-        containerClient = new BlobContainerClientBuilder()
-                .connectionString(connectionString)
-                .containerName(CONTAINER_NAME)
-                .buildClient();
+    private CloudStorage(List<String> connectionStrings) {
+        containersClients = initBlobClientPool(connectionStrings);
     }
 
-    public synchronized static CloudStorage getInstance(String connectionString) {
+    public synchronized static CloudStorage getInstance(List<String> connectionStrings) {
         if (instance == null) {
-            // Ensure the connection string is not null or empty
-            if (BlobStorage.isValidPath(connectionString)) {
-                Log.severe("Invalid connection string provided.");
-                throw new IllegalArgumentException("Invalid connection string provided.");
+            for (String connString : connectionStrings) {
+                if (BlobStorage.isValidPath(connString)) {
+                    Log.severe("Invalid connection string provided.");
+                    throw new IllegalArgumentException("Invalid connection string provided.");
+                }
+
+                if (!connString.startsWith("DefaultEndpointsProtocol=")) {
+                    Log.severe("Invalid connection string provided.");
+                    throw new IllegalArgumentException("Invalid connection string provided.");
+                }
             }
 
-            // Ensure the connection string is valid
-            if (!connectionString.startsWith("DefaultEndpointsProtocol=")) {
-                Log.severe("Invalid connection string provided.");
-                throw new IllegalArgumentException("Invalid connection string provided.");
+            instance = new CloudStorage(connectionStrings);
+
+            // Ensure the containers exist
+            for (BlobContainerClient containerClient : containersClients.values()) {
+                if (!containerClient.exists()) {
+                    containerClient.create();
+                    Log.info("Created new Azure Blob container: " + CONTAINER_NAME);
+                }
             }
 
-            instance = new CloudStorage(connectionString);
-
-            // Ensure the container exists
-            if (!containerClient.exists()) {
-                containerClient.create();
-                Log.info("Created new Azure Blob container: " + CONTAINER_NAME);
-            }
         }
         return instance;
+    }
+
+    /**
+     * Initializes the Azure Blob Storage client pool with the provided connection strings
+     * The first connection string is considered the primary connection string
+     *
+     * @param connectionStrings List of connection strings
+     * @return HashMap of BlobContainerClient objects
+     */
+    private HashMap<String, BlobContainerClient> initBlobClientPool(List<String> connectionStrings) {
+        HashMap<String, BlobContainerClient> blobClientPool = new HashMap<>();
+        for (String connectionString : connectionStrings) {
+            BlobContainerClient blobClient = new BlobContainerClientBuilder()
+                    .connectionString(connectionString)
+                    .containerName(CONTAINER_NAME)
+                    .buildClient();
+            blobClientPool.put((isPrimary) ? "Primary" : "Secondary", blobClient);
+            isPrimary = false;
+        }
+        return blobClientPool;
     }
 
     @Override
@@ -58,9 +81,10 @@ public class CloudStorage implements BlobStorage {
         }
 
         return TryCatch.tryCatchForResult(Log, () -> {
-            var blobClient = containerClient.getBlobClient(path);
-            blobClient.upload(BinaryData.fromBytes(bytes), true);
-
+            for (BlobContainerClient containerClient : containersClients.values()) {
+                var blobClient = containerClient.getBlobClient(path);
+                blobClient.upload(BinaryData.fromBytes(bytes), true);
+            }
             Log.info("Uploaded blob to path: " + path);
             return Result.ok();
         });
@@ -73,11 +97,13 @@ public class CloudStorage implements BlobStorage {
         }
 
         return TryCatch.tryCatchForResult(Log, () -> {
-            var blobClient = containerClient.getBlobClient(path);
-            if (!blobClient.exists()) {
-                return Result.error(ErrorCode.NOT_FOUND);
+            for (BlobContainerClient containerClient : containersClients.values()) {
+                var blobClient = containerClient.getBlobClient(path);
+                if (!blobClient.exists()) {
+                    return Result.error(ErrorCode.NOT_FOUND);
+                }
+                blobClient.delete();
             }
-            blobClient.delete();
             Log.info("Deleted blob at path: " + path);
             return Result.ok();
         });
@@ -90,6 +116,7 @@ public class CloudStorage implements BlobStorage {
         }
 
         return TryCatch.tryCatchForResult(Log, () -> {
+            var containerClient = containersClients.get("Primary");
             var blobClient = containerClient.getBlobClient(path);
             if (!blobClient.exists()) {
                 return Result.error(ErrorCode.NOT_FOUND);
@@ -107,6 +134,7 @@ public class CloudStorage implements BlobStorage {
         }
 
         return TryCatch.tryCatchForResult(Log, () -> {
+            var containerClient = containersClients.get("Primary");
             var blobClient = containerClient.getBlobClient(path);
             if (!blobClient.exists()) {
                 return Result.error(ErrorCode.NOT_FOUND);

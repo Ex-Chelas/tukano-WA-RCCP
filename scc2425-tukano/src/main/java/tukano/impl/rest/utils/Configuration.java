@@ -10,13 +10,32 @@ import tukano.impl.storage.FilesystemStorage;
 import tukano.impl.storage.Storage;
 import utils.Args;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Configuration class to configure services based on environment variables
+ * <p>
+ * Assumptions:
+ * <p>
+ * - The number of regions is provided in the environment variable NR_OF_REGIONS
+ * <p>
+ * - The connection strings for the storage and database services are provided in the environment variables
+ * <code>STORAGE_CONNECTION_STRING_{region}</code>
+ * and <code>DB_CONNECTION_URL_{region}</code> when there are multiple connection strings for that
+ * service based on region
+ * <p>
+ * - The connection string index 0 is the primary connection string for multi-region services
+ * <p>
+ * - The arguments are provided in the environment variable ARGS
  */
 public class Configuration {
     private static final String ARGS_KEY = "ARGS";
-    private static final String STORAGE_CONNECTION_STRING_KEY = "STORAGE_CONNECTION_STRING";
+    private static final String STORAGE_CONNECTION_STRING_KEY = "STORAGE_CONNECTION_STRING_{region}";
+    //    private static final String DB_CONNECTION_UR_TEMPLATE_KEY = "DB_CONNECTION_URL_{region}";
     private static final String DB_CONNECTION_URL_KEY = "DB_CONNECTION_URL";
+    private static final String NR_OF_REGIONS_KEY = "NR_OF_REGIONS";
+    private static final String PRIMARY_REGION_KEY = "PRIMARY_REGION";
 
     private static final String ARGS_SPLITTER = " ";
 
@@ -27,15 +46,25 @@ public class Configuration {
 
     public static void configureServices() {
         Args.use(System.getenv(ARGS_KEY).split(ARGS_SPLITTER));
-//        System.getenv().forEach((key, value) -> System.out.println(key + " = " + value));
         Token.setSecret(Args.valueOf(SECRET_FLAG, ""));
+        var regions = System.getenv(NR_OF_REGIONS_KEY);
+        var primaryRegion = System.getenv(PRIMARY_REGION_KEY);
+
+        var dbConnectionStrings = System.getenv(DB_CONNECTION_URL_KEY);
+//        List<String> dbConnectionStrings = new ArrayList<>();
+        List<String> storageConnectionStrings = new ArrayList<>();
+
+        for (int i = 0; i < Integer.parseInt(regions); i++) {
+//            dbConnectionStrings.add(System.getenv(DB_CONNECTION_UR_TEMPLATE_KEY.replace("{region}", String.valueOf(i))));
+            storageConnectionStrings.add(System.getenv(STORAGE_CONNECTION_STRING_KEY.replace("{region}", String.valueOf(i))));
+        }
 
         switch (Args.valueOf(DB_FLAG, "cosmos")) {
             case "cosmos": // has region
-                DB.configureInstance(CosmosDB.getInstance(System.getenv(DB_CONNECTION_URL_KEY)));
+                DB.configureInstance(CosmosDB.getInstance(dbConnectionStrings, primaryRegion));
                 break;
             case "hibernate": // doesnt have region
-                DB.configureInstance(Hibernate.getInstance(System.getenv(DB_CONNECTION_URL_KEY)));
+                DB.configureInstance(Hibernate.getInstance(dbConnectionStrings, primaryRegion));
                 break;
             default:
                 throw new IllegalArgumentException("Invalid DB type");
@@ -43,10 +72,10 @@ public class Configuration {
 
         switch (Args.valueOf(STORAGE_FLAG, "azure")) {
             case "azure": // has region
-                Storage.configureInstance(CloudStorage.getInstance(System.getenv(STORAGE_CONNECTION_STRING_KEY)));
+                Storage.configureInstance(CloudStorage.getInstance(storageConnectionStrings));
                 break;
             case "local": // doesnt have region
-                Storage.configureInstance(FilesystemStorage.getInstance(System.getenv(STORAGE_CONNECTION_STRING_KEY)));
+                Storage.configureInstance(FilesystemStorage.getInstance(storageConnectionStrings));
                 break;
             default:
                 throw new IllegalArgumentException("Invalid storage type");
@@ -63,5 +92,6 @@ public class Configuration {
             default:
                 throw new IllegalArgumentException("Invalid cache type");
         }
+
     }
 }

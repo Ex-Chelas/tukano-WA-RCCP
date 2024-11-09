@@ -1,5 +1,6 @@
 package tukano.impl.storage;
 
+
 import tukano.api.Result;
 import utils.Hash;
 import utils.IO;
@@ -10,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -35,9 +37,9 @@ public class FilesystemStorage implements BlobStorage {
         }
     }
 
-    public static FilesystemStorage getInstance(String connectionString) {
+    public static FilesystemStorage getInstance(List<String> connectionString) {
         if (instance == null) {
-            instance = new FilesystemStorage(connectionString);
+            instance = new FilesystemStorage(connectionString.get(0));
         }
         return instance;
     }

@@ -21,29 +21,27 @@ public class CosmosDB implements DBService {
     private static final Logger Log = Logger.getLogger(CosmosDB.class.getName());
     private static final String DB_KEY = System.getenv("COSMOSDB_KEY");
     private static final String DB_NAME = System.getenv("COSMOSDB_NAME");
-    private static final String REGION = System.getenv("COSMOS_DB_REGION");
 
     private static CosmosClient client;
     private static CosmosDB instance;
-    private static CosmosDatabase db;
 
-    private CosmosDB(String connectionString) {
-        client = createCosmosClient(connectionString);
+    private CosmosDB(String connectionString, String primaryRegion) {
+        client = createCosmosClient(connectionString, primaryRegion);
     }
 
-    synchronized public static CosmosDB getInstance(String connectionString) {
+    synchronized public static CosmosDB getInstance(String connectionString, String primaryRegion) {
         if (instance == null)
-            instance = new CosmosDB(connectionString);
+            instance = new CosmosDB(connectionString, primaryRegion);
         return instance;
     }
 
-    private static CosmosClient createCosmosClient(String connectionString) {
+    private static CosmosClient createCosmosClient(String connectionString, String primaryRegion) {
         try {
             return new CosmosClientBuilder()
                     .endpoint(connectionString)
                     .key(DB_KEY)
                     .multipleWriteRegionsEnabled(true)
-                    .preferredRegions(List.of(REGION))
+                    .preferredRegions(List.of(primaryRegion))
                     //.gatewayMode() // eduroam only works with gatewayMode
                     .directMode() // for better performance
                     .consistencyLevel(ConsistencyLevel.SESSION)
@@ -277,12 +275,6 @@ public class CosmosDB implements DBService {
      */
     private static String createQueryWPredicate(String containerName, String predicate) {
         return "Select * from " + containerName + " where " + predicate;
-    }
-
-    private synchronized void init() {
-        if (db != null)
-            return;
-        db = client.getDatabase(DB_NAME);
     }
 
     @Override

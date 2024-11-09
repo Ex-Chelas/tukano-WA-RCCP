@@ -114,7 +114,7 @@ public class RestUsersResource extends RestResource implements RestUsers {
             return super.resultOrThrow(impl.updateUser(name, pwd, user));
         }
         try (var jedis = RedisCache.getCachePool().getResource()) {
-        var updatedUser = super.resultOrThrow(impl.updateUser(name, pwd, user));
+            var updatedUser = super.resultOrThrow(impl.updateUser(name, pwd, user));
             var key = USER_KEY + name;
             var oldValue = jedis.get(key);
             if (oldValue != null) {
@@ -122,7 +122,7 @@ public class RestUsersResource extends RestResource implements RestUsers {
             }
             jedis.set(USER_KEY + updatedUser.displayName(), JSON.encode(user));
             invalidateSearchCacheByUser(name);
-        return updatedUser;
+            return updatedUser;
         }
     }
 

@@ -65,6 +65,7 @@ public interface Shorts {
      *                    operation
      * @param password    the password of the follower
      * @return (OK, void) if the operation was successful;
+     * BAD_REQUEST if the userId2 is the system user
      * NOT_FOUND if any of the users does not exist
      * FORBIDDEN if the password is incorrect
      */
