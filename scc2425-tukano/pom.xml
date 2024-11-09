@@ -12,6 +12,14 @@
         <kotlin.version>2.0.20</kotlin.version>
     </properties>
     <build>
+        <resources>
+            <resource>
+                <directory>webapp/WEB-INF/classes</directory>
+                <includes>
+                    <include>hibernate.cfg.xml</include>
+                </includes>
+            </resource>
+        </resources>
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/main/test</testSourceDirectory>
         <plugins>

@@ -54,9 +54,13 @@ public class Configuration {
 //        List<String> dbConnectionStrings = new ArrayList<>();
         List<String> storageConnectionStrings = new ArrayList<>();
 
-        for (int i = 0; i < Integer.parseInt(regions); i++) {
+        for (int i = 1; i < Integer.parseInt(regions) + 1; i++) {
 //            dbConnectionStrings.add(System.getenv(DB_CONNECTION_UR_TEMPLATE_KEY.replace("{region}", String.valueOf(i))));
-            storageConnectionStrings.add(System.getenv(STORAGE_CONNECTION_STRING_KEY.replace("{region}", String.valueOf(i))));
+
+            //storage connection strings
+            var key = STORAGE_CONNECTION_STRING_KEY.replace("{region}", String.valueOf(i));
+            var storageConnectionString = System.getenv(key);
+            storageConnectionStrings.add(storageConnectionString);
         }
 
         switch (Args.valueOf(DB_FLAG, "cosmos")) {

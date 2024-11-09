@@ -100,7 +100,7 @@ public class JavaShorts implements Shorts {
     public Result<Void> follow(String userId1, String userId2, boolean isFollowing, String password) {
         Log.info(() -> format("follow : userId1 = %s, userId2 = %s, isFollowing = %s, pwd = %s\n", userId1, userId2, isFollowing, password));
 
-        if (userId2.equals(SYSTEM_USER_ID))
+        if (userId2.equals(SYSTEM_USER_ID) && !isFollowing)
             return error(FORBIDDEN);
 
         return errorOrResult(okUser(userId1, password), user -> {
