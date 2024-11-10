@@ -1,0 +1,331 @@
+~\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests git:[main]
+artillery run upload_shorts.yaml
+Test run id: txwf4_cd854nybmdcewrzgg3ynepjhjrde5_b6nj
+/ [Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.list'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.list'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.map'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.map'
+}
+Parsed 201 rows
+\ [Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.list'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.list'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.map'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.map'
+}
+Parsed 201 rows
+/ [Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.list'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.list'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.map'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.map'
+}
+Parsed 201 rows
+\ [Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.list'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.list'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.map'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.map'
+}
+Parsed 201 rows
+/ [Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.map'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.map'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.list'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.list'
+}
+Parsed 201 rows
+\ [Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.list'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.list'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.map'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.map'
+}
+Parsed 201 rows
+/ [Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.map'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.map'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.list'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.list'
+}
+Parsed 201 rows
+\ [Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.list'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.list'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.map'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.map'
+}
+Parsed 201 rows
+/ [Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.map'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.map'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.list'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.list'
+}
+- Parsed 201 rows
+| [Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.map'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.map'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.list'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.list'
+}
+Parsed 201 rows
+- [Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.map'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.map'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\guilh\Desktop\Universidade\NOVA\1Semester\SCC\tukano-WA-RCCP\scc2425-tukano\src\main\artillery\givenTests\shorts\shorts.list'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\guilh\\Desktop\\Universidade\\NOVA\\1Semester\\SCC\\tukano-WA-RCCP\\scc2425-tukano\\src\\main\\artillery\\givenTests\\shorts\\shorts.list'
+}
+Parsed 201 rows
+Phase started: Warm up (index: 0, duration: 10s) 21:36:46(+0000)
+
+Phase completed: Warm up (index: 0, duration: 10s) 21:36:56(+0000)
+
+--------------------------------------
+Metrics for period to: 21:36:50(+0000) (width: 2.246s)
+--------------------------------------
+
+http.codes.200: ................................................................ 4
+http.codes.204: ................................................................ 4
+http.downloaded_bytes: ......................................................... 1097
+http.request_rate: ............................................................. 5/sec
+http.requests: ................................................................. 8
+http.response_time:
+  min: ......................................................................... 58
+  max: ......................................................................... 869
+  mean: ........................................................................ 266.3
+  median: ...................................................................... 111.1
+  p95: ......................................................................... 497.8
+  p99: ......................................................................... 497.8
+http.response_time.2xx:
+  min: ......................................................................... 58
+  max: ......................................................................... 869
+  mean: ........................................................................ 266.3
+  median: ...................................................................... 111.1
+  p95: ......................................................................... 497.8
+  p99: ......................................................................... 497.8
+http.responses: ................................................................ 8
+plugins.metrics-by-endpoint./rest/blobs/{{ blobUrl }}.codes.204: ............... 4
+plugins.metrics-by-endpoint./rest/shorts/{{ id }}?pwd={{ pwd }}.codes.200: ..... 4
+plugins.metrics-by-endpoint.response_time./rest/blobs/{{ blobUrl }}:
+  min: ......................................................................... 58
+  max: ......................................................................... 502
+  mean: ........................................................................ 229.3
+  median: ...................................................................... 74.4
+  p95: ......................................................................... 284.3
+  p99: ......................................................................... 284.3
+plugins.metrics-by-endpoint.response_time./rest/shorts/{{ id }}?pwd={{ pwd }}:
+  min: ......................................................................... 111
+  max: ......................................................................... 869
+  mean: ........................................................................ 303.3
+  median: ...................................................................... 111.1
+  p95: ......................................................................... 120.3
+  p99: ......................................................................... 120.3
+vusers.completed: .............................................................. 4
+vusers.created: ................................................................ 4
+vusers.created_by_name.Upload short: ........................................... 4
+vusers.failed: ................................................................. 0
+vusers.session_length:
+  min: ......................................................................... 194.8
+  max: ......................................................................... 1400
+  mean: ........................................................................ 551.7
+  median: ...................................................................... 210.6
+  p95: ......................................................................... 399.5
+  p99: ......................................................................... 399.5
+
+
+--------------------------------------
+Metrics for period to: 21:37:00(+0000) (width: 6.388s)
+--------------------------------------
+
+errors.ECONNRESET: ............................................................. 1
+http.codes.200: ................................................................ 25
+http.codes.204: ................................................................ 25
+http.codes.404: ................................................................ 1
+http.downloaded_bytes: ......................................................... 6862
+http.request_rate: ............................................................. 13/sec
+http.requests: ................................................................. 52
+http.response_time:
+  min: ......................................................................... 54
+  max: ......................................................................... 307
+  mean: ........................................................................ 94.5
+  median: ...................................................................... 106.7
+  p95: ......................................................................... 130.3
+  p99: ......................................................................... 153
+http.response_time.2xx:
+  min: ......................................................................... 54
+  max: ......................................................................... 307
+  mean: ........................................................................ 95.2
+  median: ...................................................................... 106.7
+  p95: ......................................................................... 130.3
+  p99: ......................................................................... 153
+http.response_time.4xx:
+  min: ......................................................................... 55
+  max: ......................................................................... 55
+  mean: ........................................................................ 55
+  median: ...................................................................... 55.2
+  p95: ......................................................................... 55.2
+  p99: ......................................................................... 55.2
+http.responses: ................................................................ 51
+plugins.metrics-by-endpoint./rest/blobs/{{ blobUrl }}.codes.204: ............... 25
+plugins.metrics-by-endpoint./rest/blobs/{{ blobUrl }}.errors.ECONNRESET: ....... 1
+plugins.metrics-by-endpoint./rest/shorts/{{ id }}?pwd={{ pwd }}.codes.200: ..... 25
+plugins.metrics-by-endpoint./rest/shorts/{{ id }}?pwd={{ pwd }}.codes.404: ..... 1
+plugins.metrics-by-endpoint.response_time./rest/blobs/{{ blobUrl }}:
+  min: ......................................................................... 54
+  max: ......................................................................... 307
+  mean: ........................................................................ 73
+  median: ...................................................................... 59.7
+  p95: ......................................................................... 85.6
+  p99: ......................................................................... 96.6
+plugins.metrics-by-endpoint.response_time./rest/shorts/{{ id }}?pwd={{ pwd }}:
+  min: ......................................................................... 55
+  max: ......................................................................... 154
+  mean: ........................................................................ 115.1
+  median: ...................................................................... 111.1
+  p95: ......................................................................... 130.3
+  p99: ......................................................................... 138.4
+vusers.completed: .............................................................. 25
+vusers.created: ................................................................ 26
+vusers.created_by_name.Upload short: ........................................... 26
+vusers.failed: ................................................................. 1
+vusers.session_length:
+  min: ......................................................................... 175.6
+  max: ......................................................................... 426.9
+  mean: ........................................................................ 204.6
+  median: ...................................................................... 190.6
+  p95: ......................................................................... 228.2
+  p99: ......................................................................... 252.2
+
+
+All VUs finished. Total time: 10 seconds
+
+--------------------------------
+Summary report @ 21:36:58(+0000)
+--------------------------------
+
+errors.ECONNRESET: ............................................................. 1
+http.codes.200: ................................................................ 29
+http.codes.204: ................................................................ 29
+http.codes.404: ................................................................ 1
+http.downloaded_bytes: ......................................................... 7959
+http.request_rate: ............................................................. 7/sec
+http.requests: ................................................................. 60
+http.response_time:
+  min: ......................................................................... 54
+  max: ......................................................................... 869
+  mean: ........................................................................ 117.7
+  median: ...................................................................... 108.9
+  p95: ......................................................................... 284.3
+  p99: ......................................................................... 497.8
+http.response_time.2xx:
+  min: ......................................................................... 54
+  max: ......................................................................... 869
+  mean: ........................................................................ 118.8
+  median: ...................................................................... 108.9
+  p95: ......................................................................... 284.3
+  p99: ......................................................................... 497.8
+http.response_time.4xx:
+  min: ......................................................................... 55
+  max: ......................................................................... 55
+  mean: ........................................................................ 55
+  median: ...................................................................... 55.2
+  p95: ......................................................................... 55.2
+  p99: ......................................................................... 55.2
+http.responses: ................................................................ 59
+plugins.metrics-by-endpoint./rest/blobs/{{ blobUrl }}.codes.204: ............... 29
+plugins.metrics-by-endpoint./rest/blobs/{{ blobUrl }}.errors.ECONNRESET: ....... 1
+plugins.metrics-by-endpoint./rest/shorts/{{ id }}?pwd={{ pwd }}.codes.200: ..... 29
+plugins.metrics-by-endpoint./rest/shorts/{{ id }}?pwd={{ pwd }}.codes.404: ..... 1
+plugins.metrics-by-endpoint.response_time./rest/blobs/{{ blobUrl }}:
+  min: ......................................................................... 54
+  max: ......................................................................... 502
+  mean: ........................................................................ 94.6
+  median: ...................................................................... 59.7
+  p95: ......................................................................... 284.3
+  p99: ......................................................................... 308
+plugins.metrics-by-endpoint.response_time./rest/shorts/{{ id }}?pwd={{ pwd }}:
+  min: ......................................................................... 55
+  max: ......................................................................... 869
+  mean: ........................................................................ 140.2
+  median: ...................................................................... 111.1
+  p95: ......................................................................... 138.4
+  p99: ......................................................................... 153
+vusers.completed: .............................................................. 29
+vusers.created: ................................................................ 30
+vusers.created_by_name.Upload short: ........................................... 30
+vusers.failed: ................................................................. 1
+vusers.session_length:
+  min: ......................................................................... 175.6
+  max: ......................................................................... 1400
+  mean: ........................................................................ 252.5
+  median: ...................................................................... 194.4
+  p95: ......................................................................... 399.5
+  p99: ......................................................................... 424.2
