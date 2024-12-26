@@ -11,7 +11,6 @@ import tukano.api.User;
 import tukano.api.Users;
 import tukano.api.rest.RestUsers;
 import tukano.impl.JavaUsers;
-import tukano.impl.rest.RestResource;
 import utils.JSON;
 
 @Singleton
