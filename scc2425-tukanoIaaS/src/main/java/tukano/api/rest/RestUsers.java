@@ -12,6 +12,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import tukano.api.User;
 
 @Path(RestUsers.PATH)
@@ -27,14 +28,15 @@ public interface RestUsers {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	String createUser(User user);
-	
-	
+
+
 	@GET
-	@Path("/{" + USER_ID+ "}")
+	@Path("/{" + USER_ID + "}")
 	@Produces(MediaType.APPLICATION_JSON)
-	User getUser(@PathParam(USER_ID) String userId, @QueryParam( PWD ) String pwd);
-	
-	
+		//TODO: This shall also do the login.
+	Response getUser(@PathParam(USER_ID) String userId, @QueryParam(PWD) String pwd);
+
+
 	@PUT
 	@Path("/{" + USER_ID+ "}")
 	@Consumes(MediaType.APPLICATION_JSON)
