@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tukano-app
+  labels:
+    app: tukano-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tukano-app
+  template:
+    metadata:
+      labels:
+        app: tukano-app
+    spec:
+      containers:
+
+        # TUKANO APK
+        - name: tukano-app
+          image: sideghost/tukano-app:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: REDIS_HOST
+              value: redis-service
+            - name: REDIS_PORT
+              value: "6379"
+            - name: POSTGRES_HOST
+              value: postgres-service
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_DB
+              value: postgres
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+          # Blob Storage
+          volumeMounts:
+            - mountPath: /blob-storage
+              name: blob-storage
+
+        # Postgres DB
+        - name: postgres
+          image: sideghost/postgres
+          ports:
+            - containerPort: 5432
+          env:
+              - name: POSTGRES_PASSWORD
+                value: "postgres"
+              - name: POSTGRES_DB
+                value: "postgres"
+              - name: POSTGRES_USER
+                value: "postgres"
+          volumeMounts:
+              - mountPath: /var/lib/postgresql/data
+                name: postgres-data
+
+        # REDIS CACHE
+        - name: redis
+          image: redis/redis-stack-server:latest
+          ports:
+            - containerPort: 6379
+          args: [ "redis-server", "--requirepass", "password" ]
+          env:
+            - name: REDIS_PASSWORD
+              value: "password"
+
+
+      volumes:
+        - name: postgres-data
+          emptyDir: { }
+        - name: blob-storage
+          persistentVolumeClaim:
+            claimName: blob-storage-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tukano-app-service
+spec:
+  selector:
+    app: tukano-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
