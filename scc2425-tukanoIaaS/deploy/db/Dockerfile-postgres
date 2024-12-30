@@ -1,0 +1,10 @@
+FROM postgres
+
+ENV PORT=5432
+
+USER postgres
+
+COPY --chown=postgres:postgres wait-for-postgres.sh ./bin/wait-for-postgres.sh
+RUN chmod +x ./bin/wait-for-postgres.sh
+
+EXPOSE $PORT

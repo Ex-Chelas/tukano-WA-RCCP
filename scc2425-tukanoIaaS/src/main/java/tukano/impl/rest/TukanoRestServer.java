@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 import org.glassfish.jersey.jdkhttp.JdkHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
-import tukano.impl.Token;
 import utils.Args;
 import utils.IP;
 
@@ -47,7 +46,7 @@ public class TukanoRestServer {
 	public static void main(String[] args) throws Exception {
 		Args.use(args);
 		
-		Token.setSecret( Args.valueOf("-secret", ""));
+//		Token.setSecret( Args.valueOf("-secret", ""));
 //		Props.load( Args.valueOf("-props", "").split(","));
 		
 		new TukanoRestServer().start();

@@ -22,20 +22,10 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: REDIS_HOST
-              value: redis-service
-            - name: REDIS_PORT
-              value: "6379"
-            - name: POSTGRES_HOST
-              value: postgres-service
-            - name: POSTGRES_PORT
-              value: "5432"
-            - name: POSTGRES_DB
-              value: postgres
-            - name: POSTGRES_USER
-              value: postgres
-            - name: POSTGRES_PASSWORD
-              value: postgres
+            - name: REDIS_HOSTNAME
+              value: "localhost"
+            - name: REDIS_KEY
+              value: "password"
           # Blob Storage
           volumeMounts:
             - mountPath: /blob-storage
@@ -48,10 +38,6 @@ spec:
             - containerPort: 5432
           env:
               - name: POSTGRES_PASSWORD
-                value: "postgres"
-              - name: POSTGRES_DB
-                value: "postgres"
-              - name: POSTGRES_USER
                 value: "postgres"
           volumeMounts:
               - mountPath: /var/lib/postgresql/data

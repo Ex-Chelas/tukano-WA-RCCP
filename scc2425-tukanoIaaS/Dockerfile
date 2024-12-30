@@ -1,24 +1,19 @@
 # 1st stage: copy de code and dependencies and build the project
-FROM maven:3.8.8-eclipse-temurin-17 AS BUILDER_IMAGE
+FROM maven:3.8.8-eclipse-temurin-17 AS builder_image
 
 WORKDIR /app
+COPY . .
 
-COPY pom.xml .
-COPY src ./src
-
-RUN mvn clean package -DskipTests
+RUN mvn clean compile package -DskipTests -X
 
 # 2nd stage: deploy the apk
-FROM tomcat:10.0-jdk17
+FROM tomcat:10-jdk17-corretto
 
 # Set the working directory in the container
 WORKDIR /usr/local/tomcat
 
 # Copy the WAR file from the Maven build
-COPY --from=BUILDER_IMAGE /app/target/*.war ./webapps/
+COPY --from=builder_image /app/target/*.war ./webapps/
 
 # Expose the default Tomcat port
 EXPOSE 8080
-
-# Start Tomcat
-CMD ["catalina.sh", "run"]
