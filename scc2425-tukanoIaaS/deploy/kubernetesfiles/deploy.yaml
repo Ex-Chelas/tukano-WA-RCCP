@@ -26,10 +26,6 @@ spec:
               value: "localhost"
             - name: REDIS_KEY
               value: "password"
-          # Blob Storage
-          volumeMounts:
-            - mountPath: /blob-storage
-              name: blob-storage
 
         # Postgres DB
         - name: postgres
@@ -42,6 +38,13 @@ spec:
           volumeMounts:
               - mountPath: /var/lib/postgresql/data
                 name: postgres-data
+
+        # blob storage
+        - name: azurite
+          image: mcr.microsoft.com/azure-storage/azurite
+          ports:
+            - containerPort: 10000
+          args: ["azurite-blob", "--blobHost", "0.0.0.0"]
 
         # REDIS CACHE
         - name: redis
@@ -57,9 +60,6 @@ spec:
       volumes:
         - name: postgres-data
           emptyDir: { }
-        - name: blob-storage
-          persistentVolumeClaim:
-            claimName: blob-storage-claim
 ---
 apiVersion: v1
 kind: Service

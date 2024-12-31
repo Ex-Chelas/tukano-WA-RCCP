@@ -17,8 +17,6 @@ import tukano.api.Result.ErrorCode;
 /**
  * A helper class to perform POJO (Plain Old Java Objects) persistence, using
  * Hibernate and a backing relational database.
- * 
- * @param <Session>
  */
 public class Hibernate {
 //	private static Logger Log = Logger.getLogger(Hibernate.class.getName());

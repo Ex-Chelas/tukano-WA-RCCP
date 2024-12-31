@@ -6,22 +6,30 @@
 		<property name="connection.url">jdbc:postgresql://localhost:5432/postgres</property>
 		<property name="connection.username">postgres</property>
 		<property name="connection.password">postgres</property>
-		<property name="hibernate.default_schema">public</property>
-		<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+
 		<!-- JDBC connection pool settings ... using built-in test pool -->
 		<property name="connection.pool_size">64</property>
+
 		<!-- Echo the SQL to stdout -->
-		<property name="show_sql">false</property>
+		<property name="hibernate.show_sql">true</property>
+		<property name="hibernate.format_sql">true</property>
+		<property name="hibernate.use_sql_comments">true</property>
+
 		<!-- Set the current session context -->
 		<property name="current_session_context_class">thread</property>
+
 		<!-- Drop and re-create the database schema on startup -->
 		<property name="hbm2ddl.auto">create-drop</property>
+
 		<!-- dbcp connection pool configuration -->
-		<property name="hibernate.dbcp.initialSize">5</property>
-		<property name="hibernate.dbcp.maxTotal">20</property>
-		<property name="hibernate.dbcp.maxIdle">10</property>
-		<property name="hibernate.dbcp.minIdle">5</property>
-		<property name="hibernate.dbcp.maxWaitMillis">-1</property>
+		<!-- HikariCP Settings -->
+		<property name="hibernate.hikari.minimumIdle">5</property>
+		<property name="hibernate.hikari.maximumPoolSize">20</property>
+		<property name="hibernate.hikari.idleTimeout">300000</property>
+		<property name="hibernate.hikari.maxLifetime">1800000</property>
+		<property name="hibernate.hikari.connectionTimeout">30000</property>
+
+		<!-- classes to map -->
 		<mapping class="tukano.api.User" />
 		<mapping class="tukano.api.Short" />
 		<mapping class="tukano.impl.data.Following" />
