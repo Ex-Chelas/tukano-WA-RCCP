@@ -1,8 +1,7 @@
 package tukano.impl.rest;
 
-import tukano.impl.Token;
-
 import jakarta.ws.rs.core.Application;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,8 +14,6 @@ public class DeployApplication extends Application {
         resources.add(RestBlobsResource.class);
         resources.add(RestUsersResource.class);
         resources.add(RestShortsResource.class);
-
-        Token.setSecret("");
     }
 
     @Override
@@ -25,7 +22,7 @@ public class DeployApplication extends Application {
     }
 
     @Override
-    @SuppressWarnings("deprecated")
+    @SuppressWarnings("deprecation")
     public Set<Object> getSingletons() {
         return singletons;
     }

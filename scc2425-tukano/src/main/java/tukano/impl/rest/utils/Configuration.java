@@ -96,6 +96,5 @@ public class Configuration {
             default:
                 throw new IllegalArgumentException("Invalid cache type");
         }
-
     }
 }
