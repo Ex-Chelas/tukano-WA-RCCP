@@ -4,7 +4,6 @@ ENV PORT=5432
 
 USER postgres
 
-COPY ../../src/main/sql/create-tables.sql /docker-entrypoint-initdb.d/1_create.sql
 COPY --chown=postgres:postgres /deploy/scripts/wait-for-postgres.sh ./bin/wait-for-postgres.sh
 RUN chmod +x ./bin/wait-for-postgres.sh
 
